@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzería Belgrano | Auténtica Pizza Artesanal a la Leña</title>
+    <meta name="description" content="Pizzería Belgrano: Auténtica pizza artesanal al horno de leña, empanadas criollas y masa madre de 48hs. Pedí online por WhatsApp y recibilo caliente en tu casa.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css"/>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="css/all.min.css">
+    
+    <!-- Normalize CSS -->
+    <link rel="stylesheet" href="css/normalize.css">
+    
+    <!-- Custom Main Styles -->
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+    <!-- Header Section Starts -->
+    <header class="header">
+        <a href="#Inicio" class="logo">
+            <i class="fas fa-pizza-slice"></i>
+            <span>Pizzería Belgrano</span>
+            <span class="logo-tag">Artesanal</span>
+        </a>
+
+        <nav class="navbar">
+            <a href="#Inicio">Inicio</a>
+            <a href="#Nosotros">Nosotros</a>
+            <a href="#Menú">Menú</a>
+            <a href="#Categorías">Categorías</a>
+            <a href="#Reseñas">Reseñas</a>
+            <a href="#Noticias">Historias</a>
+        </nav>
+
+        <div class="icons">
+            <div class="icon-btn fas fa-bars" id="menu-btn" title="Menú"></div>
+            <div class="icon-btn fas fa-search" id="search-btn" title="Buscar"></div>
+            
+            <div class="cart-btn-wrapper">
+                <div class="icon-btn fas fa-shopping-cart" id="cart-btn" title="Ver Carrito"></div>
+                <span class="cart-badge" id="cart-badge">0</span>
+            </div>
+            
+            <div class="icon-btn fas fa-user" id="login-btn" title="Mi Cuenta"></div>
+        </div>
+
+        <!-- Search Form -->
+        <form class="search-form" onsubmit="event.preventDefault();">
+            <input type="search" id="search-box" placeholder="Buscar pizza, empanadas, bebidas...">
+            <label for="search-box" class="fas fa-search"></label>
+        </form>
+
+        <!-- Login Form Modal -->
+        <form class="login-form" onsubmit="event.preventDefault();">
+            <h3>Mi Cuenta</h3>
+            <input type="email" placeholder="Correo electrónico" class="input-field" required>
+            <input type="password" placeholder="Contraseña" class="input-field" required>
+            <div class="form-links">
+                <p>¿Olvidaste tu contraseña? <a href="#">Recuperar</a></p>
+                <p>¿No tenés cuenta? <a href="#">Registrate</a></p>
+            </div>
+            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+        </form>
+    </header>
+    <!-- Header Section Ends -->
+
+    <!-- Shopping Cart Drawer & Overlay Starts -->
+    <div class="cart-overlay"></div>
+    
+    <div class="cart-drawer">
+        <div class="cart-drawer-header">
+            <h3><i class="fas fa-shopping-bag"></i> Tu Pedido</h3>
+            <button class="cart-drawer-close" aria-label="Cerrar carrito">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="cart-items-container">
+            <!-- Dynamically populated by JS -->
+        </div>
+
+        <div class="cart-drawer-footer">
+            <div class="checkout-form">
+                <h4>Datos para el Envío</h4>
+                <div class="checkout-row">
+                    <input type="text" id="checkout-name" class="checkout-input" placeholder="Tu Nombre y Apellido *" required>
+                </div>
+                <div class="checkout-row">
+                    <input type="text" id="checkout-address" class="checkout-input" placeholder="Dirección de entrega (ej: Cabildo 2200, 4B) *" required>
+                </div>
+                <div class="checkout-row">
+                    <select id="checkout-payment" class="checkout-select">
+                        <option value="Efectivo">Pago: Efectivo (al recibir)</option>
+                        <option value="Mercado Pago / Transferencia">Pago: Mercado Pago / Transferencia</option>
+                        <option value="Tarjeta de Débito/Crédito">Pago: Tarjeta (con posnet)</option>
+                    </select>
+                </div>
+                <div class="checkout-row">
+                    <input type="text" id="checkout-notes" class="checkout-input" placeholder="Aclaraciones (ej: timbre, sin orégano)">
+                </div>
+            </div>
+
+            <div class="cart-summary">
+                <span class="total-label">Total del Pedido:</span>
+                <span class="total-amount" id="cart-total-amount">$0</span>
+            </div>
+
+            <button class="btn btn-whatsapp btn-checkout-whatsapp" id="btn-checkout-whatsapp">
+                <i class="fab fa-whatsapp"></i> Enviar Pedido por WhatsApp
+            </button>
+        </div>
+    </div>
+    <!-- Shopping Cart Drawer Ends -->
+
+    <!-- Floating Mobile Cart Button -->
+    <button class="floating-cart-btn" aria-label="Ver carrito">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="floating-cart-count">0</span>
+        <span class="floating-cart-total">$0</span>
+    </button>
+
+    <!-- Toast Notification Element -->
+    <div class="toast-notice" id="toast-notice"></div>
+
+    <!-- Inicio / Hero Section Starts -->
+    <section class="home Inicio" id="Inicio">
+        <div class="hero-content content">
+            <div class="hero-pill">
+                <i class="fas fa-fire"></i> Masa Madre de 48hs & Horno a Leña
+            </div>
+            <h1>La Verdadera Pizza <span>Artesanal</span> en Belgrano</h1>
+            <p>Masa ligera de fermentación lenta, mozzarella fior di latte hilada en el momento e ingredientes frescos de barrio. Hacé tu pedido en segundos y recibilo caliente en tu mesa.</p>
+            
+            <div class="hero-actions">
+                <a href="#Menú" class="btn btn-primary">
+                    <i class="fas fa-utensils"></i> Ver Menú & Precios
+                </a>
+                <button class="btn btn-whatsapp" data-action="open-cart">
+                    <i class="fab fa-whatsapp"></i> Pedir por WhatsApp
+                </button>
+            </div>
+
+            <div class="hero-features-bar">
+                <div class="hero-feature-item">
+                    <i class="fas fa-motorcycle"></i>
+                    <span>Envíos sin cargo en Belgrano</span>
+                </div>
+                <div class="hero-feature-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Entrega promedio 30 min</span>
+                </div>
+                <div class="hero-feature-item">
+                    <i class="fas fa-star"></i>
+                    <span>4.9 / 5 Calificación en Google</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Inicio / Hero Section Ends -->
+
+    <!-- Nosotros / Features Section Starts -->
+    <section class="features Nosotros" id="Nosotros">
+        <div class="heading-wrapper">
+            <div class="section-badge">¿Por qué elegirnos?</div>
+            <h2 class="heading-title">El Secreto de Nuestro <span>Sabor</span></h2>
+            <p class="heading-subtitle">Combinamos la receta tradicional napolitana con la generosidad de la pizza porteña más emblemática.</p>
+        </div>
+
+        <div class="box-container">
+            <div class="box">
+                <div class="feature-img-wrapper">
+                    <img src="images/feature-ingredientes.jpg" alt="Ingredientes Frescos Seleccionados">
+                </div>
+                <h3>Ingredientes Nobles</h3>
+                <p>Tomates San Marzano para la salsa casera, mozzarella de primera calidad y aceite de oliva virgen extra en cada pizza.</p>
+                <a href="#Menú" class="btn btn-secondary btn-sm">Ver Pizzas</a>
+            </div>
+
+            <div class="box">
+                <div class="feature-img-wrapper">
+                    <img src="images/feature-masa.jpg" alt="Masa Madre de 48 Horas">
+                </div>
+                <h3>Masa Madre 48hs</h3>
+                <p>Fermentación lenta y natural para lograr un piso crocante, bordes aireados y una digestión increíblemente liviana.</p>
+                <a href="#Nosotros" class="btn btn-secondary btn-sm">Nuestra Receta</a>
+            </div>
+
+            <div class="box">
+                <div class="feature-img-wrapper">
+                    <img src="images/feature-delivery.jpg" alt="Envío Rápido y Caliente">
+                </div>
+                <h3>Envío Rápido y Seguro</h3>
+                <p>Nuestras cajas térmicas selladas garantizan que tu pizza llegue a la temperatura ideal, como recién sacada del horno.</p>
+                <button class="btn btn-secondary btn-sm" data-action="open-cart">Hacer Pedido</button>
+            </div>
+        </div>
+    </section>
+    <!-- Nosotros / Features Section Ends -->
+
+    <!-- Menú / Products Section Starts -->
+    <section class="products Menú" id="Menú">
+        <div class="heading-wrapper">
+            <div class="section-badge">Nuestra Carta</div>
+            <h2 class="heading-title">Explorá Nuestro <span>Menú</span></h2>
+            <p class="heading-subtitle">Elegí tus favoritos y agregalos al pedido para enviar directamente por WhatsApp.</p>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="menu-filters">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="pizzas">Pizzas</button>
+            <button class="filter-btn" data-filter="empanadas">Empanadas</button>
+            <button class="filter-btn" data-filter="bebidas">Bebidas</button>
+        </div>
+
+        <!-- Slider 1: Pizzas Clásicas y Especiales -->
+        <div class="swiper product-slider">
+            <div class="swiper-wrapper">
+
+                <!-- Pizza 1 -->
+                <div class="swiper-slide box" data-category="pizzas">
+                    <div class="product-img-wrapper">
+                        <img src="images/product-1.png" alt="Pizza Margarita">
+                        <span class="product-tag-badge">Clásica</span>
+                    </div>
+                    <div class="product-content">
+                        <div class="product-header-row">
+                            <h3>Pizza Margarita</h3>
+                            <span class="price">$9.500</span>
+                        </div>
+                        <p class="product-description">Salsa de tomate casera, mozzarella fior di latte, hojas de albahaca fresca y oliva virgen extra.</p>
+                        <div class="product-footer-row">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <button class="btn-add-to-cart" 
+                                    data-id="pizza-margarita" 
+                                    data-name="Pizza Margarita" 
+                                    data-price="9500" 
+                                    data-image="images/product-1.png">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pizza 2 -->
+                <div class="swiper-slide box" data-category="pizzas">
+                    <div class="product-img-wrapper">
+                        <img src="images/product-2.png" alt="Pizza Pepperoni">
+                        <span class="product-tag-badge">Más Pedida</span>
+                    </div>
+                    <div class="product-content">
+                        <div class="product-header-row">
+                            <h3>Pizza Pepperoni</h3>
+                            <span class="price">$11.000</span>
+                        </div>
+                        <p class="product-description">Generosa capa de mozzarella fundida, rodajas de pepperoni crocante y toque de orégano.</p>
+                        <div class="product-footer-row">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <button class="btn-add-to-cart" 
+                                    data-id="pizza-pepperoni" 
+                                    data-name="Pizza Pepperoni" 
+                                    data-price="11000" 
+                                    data-image="images/product-2.png">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pizza 3 -->
+                <div class="swiper-slide box" data-category="pizzas">
+                    <div class="product-img-wrapper">
+                        <img src="images/cat-fugazzeta.jpg" alt="Fugazzeta Especial">
+                        <span class="product-tag-badge">Especial</span>
+                    </div>
+                    <div class="product-content">
+                        <div class="product-header-row">
+                            <h3>Fugazzeta Especial</h3>
+                            <span class="price">$11.800</span>
+                        </div>
+                        <p class="product-description">Rellena de abundante mozzarella, cubierta de finas tiras de cebolla caramelizada y orégano.</p>
+                        <div class="product-footer-row">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <button class="btn-add-to-cart" 
+                                    data-id="pizza-fugazzeta" 
+                                    data-name="Fugazzeta Especial" 
+                                    data-price="11800" 
+                                    data-image="images/cat-fugazzeta.jpg">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pizza 4 -->
+                <div class="swiper-slide box" data-category="pizzas">
+                    <div class="product-img-wrapper">
+                        <img src="images/cat-1.png" alt="Pizza Napolitana">
+                        <span class="product-tag-badge">Tradicional</span>
+                    </div>
+                    <div class="product-content">
+                        <div class="product-header-row">
+                            <h3>Pizza Napolitana</h3>
+                            <span class="price">$10.500</span>
+                        </div>
+                        <p class="product-description">Mozzarella fundida, rodajas de tomate natural fresco, provolone rallado, ajo y albahaca.</p>
+                        <div class="product-footer-row">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <button class="btn-add-to-cart" 
+                                    data-id="pizza-napolitana" 
+                                    data-name="Pizza Napolitana" 
+                                    data-price="10500" 
+                                    data-image="images/cat-1.png">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Slider 2: Empanadas Criollas y Bebidas -->
+        <div class="swiper product-slider">
+            <div class="swiper-wrapper">
+
+                <!-- Empanada 1 -->
+                <div class="swiper-slide box" data-category="empanadas">
+                    <div class="product-img-wrapper">
+                        <img src="images/cat-3.png" alt="Empanadas de Carne a Cuchillo">
+                        <span class="product-tag-badge">Artesanal</span>
+                    </div>
+                    <div class="product-content">
+                        <div class="product-header-row">
+                            <h3>Empanada Carne a Cuchillo</h3>
+                            <span class="price">$1.800</span>
+                        </div>
+                        <p class="product-description">Carne vacuna seleccionada cortada a cuchillo, cebolla de verdeo, huevo duro y especias criollas.</p>
+                        <div class="product-footer-row">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <button class="btn-add-to-cart" 
+                                    data-id="empanada-carne" 
+                                    data-name="Empanada Carne a Cuchillo" 
+                                    data-price="1800" 
+                                    data-image="images/cat-3.png">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empanada 2 -->
+                <div class="swiper-slide box" data-category="empanadas">
+                    <div class="product-img-wrapper">
+                        <img src="images/product-5.png" alt="Empanada Jamón y Queso">
+                        <span class="product-tag-badge">Clásica</span>
+                    </div>
+                    <div class="product-content">
+                        <div class="product-header-row">
+                            <h3>Empanada Jamón y Queso</h3>
+                            <span class="price">$1.800</span>
+                        </div>
+                        <p class="product-description">Rellena de mozzarella cremosa y jamón cocido seleccionado en masa hojaldrada dorada.</p>
+                        <div class="product-footer-row">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <button class="btn-add-to-cart" 
+                                    data-id="empanada-jyq" 
+                                    data-name="Empanada Jamón y Queso" 
+                                    data-price="1800" 
+                                    data-image="images/product-5.png">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bebida 1 -->
+                <div class="swiper-slide box" data-category="bebidas">
+                    <div class="product-img-wrapper">
+                        <img src="images/product-cerveza.jpg" alt="Cerveza Artesanal Golden/IPA">
+                        <span class="product-tag-badge">Bien Fría</span>
+                    </div>
+                    <div class="product-content">
+                        <div class="product-header-row">
+                            <h3>Cerveza Artesanal 500ml</h3>
+                            <span class="price">$3.200</span>
+                        </div>
+                        <p class="product-description">Cerveza artesanal tirada Golden o IPA, refrescante y servida a temperatura perfecta.</p>
+                        <div class="product-footer-row">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <button class="btn-add-to-cart" 
+                                    data-id="cerveza-artesanal" 
+                                    data-name="Cerveza Artesanal 500ml" 
+                                    data-price="3200" 
+                                    data-image="images/product-cerveza.jpg">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bebida 2 -->
+                <div class="swiper-slide box" data-category="bebidas">
+                    <div class="product-img-wrapper">
+                        <img src="images/product-gaseosa.jpg" alt="Gaseosa Coca-Cola 1.5L">
+                        <span class="product-tag-badge">Línea Original</span>
+                    </div>
+                    <div class="product-content">
+                        <div class="product-header-row">
+                            <h3>Coca-Cola 1.5L</h3>
+                            <span class="price">$2.500</span>
+                        </div>
+                        <p class="product-description">Botella plástica sellada de 1.5L, bien fría para compartir con tu pizza.</p>
+                        <div class="product-footer-row">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <button class="btn-add-to-cart" 
+                                    data-id="gaseosa-cola" 
+                                    data-name="Coca-Cola 1.5L" 
+                                    data-price="2500" 
+                                    data-image="images/product-gaseosa.jpg">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- Menú / Products Section Ends -->
+
+    <!-- Categorías Section Starts -->
+    <section class="categories Categorías" id="Categorías">
+        <div class="heading-wrapper">
+            <div class="section-badge">Especialidades</div>
+            <h2 class="heading-title">Nuestras <span>Categorías</span></h2>
+            <p class="heading-subtitle">Explorá cada sección de nuestra cocina tradicional.</p>
+        </div>
+
+        <div class="box-container">
+            <div class="box">
+                <div class="cat-img-wrapper">
+                    <img src="images/cat-1.png" alt="Pizzas Clásicas">
+                </div>
+                <div class="cat-info">
+                    <h3>Pizzas Clásicas</h3>
+                    <p>Margarita, Muzzarella, Napolitana</p>
+                    <a href="#Menú" class="btn btn-secondary btn-sm">Ver Pizzas</a>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="cat-img-wrapper">
+                    <img src="images/cat-fugazzeta.jpg" alt="Pizzas Especiales">
+                </div>
+                <div class="cat-info">
+                    <h3>Pizzas Especiales</h3>
+                    <p>Fugazzeta Rellena, Pepperoni, 4 Quesos</p>
+                    <a href="#Menú" class="btn btn-secondary btn-sm">Ver Especiales</a>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="cat-img-wrapper">
+                    <img src="images/cat-3.png" alt="Empanadas Caseras">
+                </div>
+                <div class="cat-info">
+                    <h3>Empanadas Caseras</h3>
+                    <p>Carne a cuchillo, Jamón y Queso, Pollo</p>
+                    <a href="#Menú" class="btn btn-secondary btn-sm">Ver Empanadas</a>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="cat-img-wrapper">
+                    <img src="images/product-cerveza.jpg" alt="Bebidas y Cervezas">
+                </div>
+                <div class="cat-info">
+                    <h3>Bebidas & Cervezas</h3>
+                    <p>Cervezas Artesanales e Hiperfrías</p>
+                    <a href="#Menú" class="btn btn-secondary btn-sm">Ver Bebidas</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Categorías Section Ends -->
+
+    <!-- Reseñas / Reviews Section Starts -->
+    <section class="review Reseñas" id="Reseñas">
+        <div class="heading-wrapper">
+            <div class="section-badge">Testimonios</div>
+            <h2 class="heading-title">Lo que dicen <span>Nuestros Clientes</span></h2>
+            <p class="heading-subtitle">Más de 5.000 clientes satisfechos en Belgrano, Colegiales y Núñez.</p>
+        </div>
+
+        <div class="swiper review-slider">
+            <div class="swiper-wrapper">
+
+                <div class="swiper-slide box">
+                    <div class="review-author">
+                        <img src="images/pic-1.png" alt="Mariana R.">
+                        <div class="author-meta">
+                            <h3>Mariana R.</h3>
+                            <span>Vecina de Belgrano R</span>
+                        </div>
+                    </div>
+                    <p class="review-quote">"La mejor fugazzeta de toda la zona norte. La masa es increíblemente liviana, no te cae pesada, y el queso desborda en cada porción. Un 10 absoluto."</p>
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <div class="swiper-slide box">
+                    <div class="review-author">
+                        <img src="images/pic-2.png" alt="Lucas G.">
+                        <div class="author-meta">
+                            <h3>Lucas G.</h3>
+                            <span>Colegiales</span>
+                        </div>
+                    </div>
+                    <p class="review-quote">"Llegó en 25 minutos, hirviendo como recién sacada del horno. Las empanadas de carne a cuchillo tienen una jugosidad única. Pedimos todas las semanas."</p>
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <div class="swiper-slide box">
+                    <div class="review-author">
+                        <img src="images/pic-3.png" alt="Sofía M.">
+                        <div class="author-meta">
+                            <h3>Sofía M.</h3>
+                            <span>Belgrano Centro</span>
+                        </div>
+                    </div>
+                    <p class="review-quote">"El sistema de pedir por WhatsApp directo con el carrito de la web es súper cómodo. No tenés que esperar a que te atiendan y el pedido llega perfecto."</p>
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <div class="swiper-slide box">
+                    <div class="review-author">
+                        <img src="images/pic-4.png" alt="Martín D.">
+                        <div class="author-meta">
+                            <h3>Martín D.</h3>
+                            <span>Núñez</span>
+                        </div>
+                    </div>
+                    <p class="review-quote">"Se nota mucho la calidad de la masa madre de 48 horas. Crocante abajo, tierna adentro y salsa natural de verdad. Es nuestra pizzería de confianza."</p>
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- Reseñas / Reviews Section Ends -->
+
+    <!-- Noticias / Blogs Section Starts -->
+    <section class="blogs Noticias" id="Noticias">
+        <div class="heading-wrapper">
+            <div class="section-badge">Nuestra Pasión</div>
+            <h2 class="heading-title">Historias & <span>Secretos Pizzeros</span></h2>
+            <p class="heading-subtitle">Conocé lo que pasa detrás de escena en nuestra cocina de barrio.</p>
+        </div>
+
+        <div class="box-container">
+            <div class="box">
+                <div class="blog-img-wrapper">
+                    <img src="images/blog-2.jpg" alt="El secreto de la masa madre">
+                </div>
+                <div class="content">
+                    <div class="icons">
+                        <span><i class="fas fa-user"></i> Maestro Pizzero</span>
+                        <span><i class="fas fa-calendar"></i> Octubre 2024</span>
+                    </div>
+                    <h3>El Secreto de la Fermentación Lenta de 48 Horas</h3>
+                    <p>Por qué el tiempo y la paciencia son el ingrediente principal para lograr una masa liviana, aireada y digestiva.</p>
+                    <a href="#Menú" class="btn btn-secondary btn-sm">Probar Pizzas</a>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="blog-img-wrapper">
+                    <img src="images/blog-1.jpg" alt="Ingredientes nobles">
+                </div>
+                <div class="content">
+                    <div class="icons">
+                        <span><i class="fas fa-user"></i> Chef Ejecutivo</span>
+                        <span><i class="fas fa-calendar"></i> Octubre 2024</span>
+                    </div>
+                    <h3>Ingredientes Nobles: El Corazón de Nuestra Salsa</h3>
+                    <p>La historia de nuestros tomates madurados al sol y el aceite de oliva que le dan el carácter auténtico a cada porción.</p>
+                    <a href="#Menú" class="btn btn-secondary btn-sm">Ver Menú</a>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="blog-img-wrapper">
+                    <img src="images/blog-3.jpg" alt="Tips para calentar la pizza">
+                </div>
+                <div class="content">
+                    <div class="icons">
+                        <span><i class="fas fa-user"></i> Equipo Belgrano</span>
+                        <span><i class="fas fa-calendar"></i> Octubre 2024</span>
+                    </div>
+                    <h3>Cómo Mantener Tu Pizza Perfecta al Recibirla</h3>
+                    <p>Tres tips sencillos para mantener la crocancia y el queso elástico si no la comés en el instante de entrega.</p>
+                    <button class="btn btn-secondary btn-sm" data-action="open-cart">Pedir Ahora</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Noticias / Blogs Section Ends -->
+
+    <!-- Footer Section Starts -->
+    <footer class="footer">
+        <div class="box-container">
+            <div class="box">
+                <h3><i class="fas fa-pizza-slice"></i> Pizzería Belgrano</h3>
+                <p>Auténtica pizza porteña con tradición italiana. Masa madre de 48 horas, horno de leña y pasión artesanal en cada porción.</p>
+                <div class="share">
+                    <a href="#" class="fab fa-instagram" title="Instagram"></a>
+                    <a href="#" class="fab fa-facebook-f" title="Facebook"></a>
+                    <a href="#" class="fab fa-whatsapp" title="WhatsApp"></a>
+                </div>
+            </div>
+
+            <div class="box">
+                <h3>Contacto & Local</h3>
+                <a href="https://wa.me/5491134567890" target="_blank" class="links"><i class="fab fa-whatsapp"></i> +54 9 11 3456-7890</a>
+                <a href="#" class="links"><i class="fas fa-map-marker-alt"></i> Mendoza & Av. Cabildo, Belgrano, CABA</a>
+                <a href="#" class="links"><i class="fas fa-clock"></i> Mar a Dom: 19:30 a 00:00 hs</a>
+                <a href="#" class="links"><i class="fas fa-envelope"></i> pedidos@pizzeriabelgrano.com</a>
+            </div>
+
+            <div class="box">
+                <h3>Navegación Rápida</h3>
+                <a href="#Inicio" class="links"><i class="fas fa-arrow-right"></i> Inicio</a>
+                <a href="#Nosotros" class="links"><i class="fas fa-arrow-right"></i> ¿Por qué elegirnos?</a>
+                <a href="#Menú" class="links"><i class="fas fa-arrow-right"></i> Menú Completo</a>
+                <a href="#Categorías" class="links"><i class="fas fa-arrow-right"></i> Categorías</a>
+                <a href="#Reseñas" class="links"><i class="fas fa-arrow-right"></i> Reseñas de Clientes</a>
+            </div>
+
+            <div class="box">
+                <h3>Zona de Cobertura</h3>
+                <p>Envíos rápidos y sin cargo en todo Belgrano, Colegiales y Núñez. Medios de pago aceptados:</p>
+                <img src="images/payment.png" class="payment-img" alt="Medios de Pago: Efectivo, Débito, Crédito, Mercado Pago">
+            </div>
+        </div>
+
+        <div class="credit">
+            © 2024 <span>Pizzería Belgrano</span> | Todos los derechos reservados.
+        </div>
+    </footer>
+    <!-- Footer Section Ends -->
+
+    <!-- Swiper JS -->
+    <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+
+    <!-- Custom Main JS -->
+    <script src="js/main.js"></script>
+
+</body>
+</html>
