@@ -45,12 +45,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (loginForm) loginForm.classList.remove('show-log');
         if (navbar) navbar.classList.remove('active');
         if (menuBtn) menuBtn.classList.remove('fa-times');
+        if (!cartDrawer || !cartDrawer.classList.contains('active')) {
+            if (cartOverlay) cartOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
     }
 
     if (menuBtn && navbar) {
         menuBtn.addEventListener('click', () => {
             const isActive = navbar.classList.toggle('active');
             menuBtn.classList.toggle('fa-times', isActive);
+            if (isActive) {
+                if (cartOverlay) cartOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                if (!cartDrawer || !cartDrawer.classList.contains('active')) {
+                    if (cartOverlay) cartOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }
             if (searchForm) searchForm.classList.remove('show-form');
             if (loginForm) loginForm.classList.remove('show-log');
         });
@@ -135,10 +148,22 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = '';
     }
 
+    function closeAll() {
+        closeCart();
+        closeAllDropdowns();
+    }
+
     if (cartBtn) cartBtn.addEventListener('click', openCart);
     if (floatingCartBtn) floatingCartBtn.addEventListener('click', openCart);
     if (cartCloseBtn) cartCloseBtn.addEventListener('click', closeCart);
-    if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
+    if (cartOverlay) cartOverlay.addEventListener('click', closeAll);
+
+    // Escape key closes modals and drawers
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeAll();
+        }
+    });
 
     // Any CTA with data-action="open-cart"
     document.querySelectorAll('[data-action="open-cart"]').forEach(btn => {
@@ -388,9 +413,13 @@ document.addEventListener('DOMContentLoaded', () => {
             window.productSwiper = new Swiper(slider, {
                 loop: false,
                 grabCursor: true,
-                spaceBetween: 24,
-                slidesPerView: 1,
+                spaceBetween: 16,
+                slidesPerView: 1.15,
                 breakpoints: {
+                    480: {
+                        slidesPerView: 1.3,
+                        spaceBetween: 18,
+                    },
                     640: {
                         slidesPerView: 2,
                         spaceBetween: 20,
@@ -413,13 +442,17 @@ document.addEventListener('DOMContentLoaded', () => {
             new Swiper(slider, {
                 loop: true,
                 grabCursor: true,
-                spaceBetween: 24,
-                slidesPerView: 1,
+                spaceBetween: 16,
+                slidesPerView: 1.08,
                 autoplay: {
-                    delay: 4000,
+                    delay: 4500,
                     disableOnInteraction: false,
                 },
                 breakpoints: {
+                    600: {
+                        slidesPerView: 1.4,
+                        spaceBetween: 18,
+                    },
                     768: {
                         slidesPerView: 2,
                         spaceBetween: 20,
