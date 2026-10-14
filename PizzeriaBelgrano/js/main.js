@@ -122,19 +122,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (loginBtn && loginForm) {
-        loginBtn.addEventListener('click', () => {
-            loginForm.classList.toggle('show-log');
+        loginBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Si ya está logueado como dueño, hacer foco en la barra de admin
+            if (window.productsDb && window.productsDb.isAdmin()) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+
+            const isShown = loginForm.classList.toggle('show-log');
             if (searchForm) searchForm.classList.remove('show-form');
             closeMobileMenu();
+
+            if (isShown) {
+                setTimeout(() => {
+                    const uInput = loginForm.querySelector('#login-username');
+                    if (uInput) uInput.focus();
+                }, 100);
+            }
         });
     }
 
     window.addEventListener('scroll', () => {
         if (searchForm && searchForm.classList.contains('show-form')) {
-            searchForm.classList.remove('show-form');
+            if (document.activeElement !== searchInput) {
+                searchForm.classList.remove('show-form');
+            }
         }
         if (loginForm && loginForm.classList.contains('show-log')) {
-            loginForm.classList.remove('show-log');
+            // No cerrar si el usuario está tipeando en el input (ej: teclado móvil)
+            const isTyping = loginForm.contains(document.activeElement);
+            if (!isTyping) {
+                loginForm.classList.remove('show-log');
+            }
         }
     }, { passive: true });
 

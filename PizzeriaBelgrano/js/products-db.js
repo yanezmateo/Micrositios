@@ -620,22 +620,30 @@
         /**
          * Helper para llamadas POST a Google Apps Script evitando bloqueos CORS
          */
-        async sendPostRequest(payload) {
+        async sendPostRequest(payload, timeoutMs = 15000) {
             const url = this.config.gasUrl;
             if (!url) throw new Error('No hay URL de Google Apps Script configurada');
 
-            // Usar 'text/plain' para evitar preflight OPTIONS bloqueado por CORS en Apps Script
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payload)
-            });
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-            if (!res.ok) {
-                throw new Error(`Error en la solicitud a Google Sheets: ${res.status}`);
+            try {
+                // Usar 'text/plain' para evitar preflight OPTIONS bloqueado por CORS en Apps Script
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
+                });
+
+                if (!res.ok) {
+                    throw new Error(`Error en la solicitud a Google Sheets: ${res.status}`);
+                }
+
+                return await res.json();
+            } finally {
+                clearTimeout(timer);
             }
-
-            return await res.json();
         }
 
         /**
@@ -651,7 +659,21 @@
 
             if (!u || !p) return { success: false, message: 'Ingresá usuario y contraseña.' };
 
-            // 1. Si hay Google Sheets conectado, validar en la nube
+            const localPass = localStorage.getItem('pizzeria_custom_pass') || '1111';
+            const validUser = u === 'admin' || u.includes('admin');
+
+            // 1. Acceso instantáneo con credenciales por defecto (admin / 1111) o clave local
+            if (validUser && (p === '1111' || p === localPass)) {
+                sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
+                this.notifyListeners('adminAuthChanged', { isAdmin: true });
+                // En segundo plano validar/notificar a Google Sheets
+                if (this.config.gasUrl) {
+                    this.sendPostRequest({ action: 'login', username: u, password: p }).catch(() => {});
+                }
+                return { success: true };
+            }
+
+            // 2. Si se cambió la contraseña en Google Sheets (no es 1111), validar en la nube
             if (this.config.gasUrl) {
                 try {
                     const res = await this.sendPostRequest({
@@ -668,19 +690,8 @@
                         return { success: false, message: res.message || 'Usuario o contraseña incorrectos.' };
                     }
                 } catch (err) {
-                    console.warn('[SheetsDB] Error validando online, usando verificación local:', err);
+                    console.warn('[SheetsDB] Error validando online con Google Sheets:', err);
                 }
-            }
-
-            // 2. Verificación local (si está offline o no se conectó a Sheets aún)
-            const localPass = localStorage.getItem('pizzeria_custom_pass') || '1111';
-            const validUser = u === 'admin' || u.includes('admin');
-            const validPass = p === localPass;
-
-            if (validUser && validPass) {
-                sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
-                this.notifyListeners('adminAuthChanged', { isAdmin: true });
-                return { success: true };
             }
 
             return { success: false, message: 'Usuario o contraseña incorrectos.' };

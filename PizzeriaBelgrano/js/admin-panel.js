@@ -335,6 +335,14 @@
             `;
             document.body.appendChild(modalsWrapper);
 
+            // Ensure toast notification container exists
+            if (!document.getElementById('toast-notice')) {
+                const toast = document.createElement('div');
+                toast.id = 'toast-notice';
+                toast.className = 'toast-notice';
+                document.body.appendChild(toast);
+            }
+
             // Populate quick image selectors
             const quickImgsContainer = document.getElementById('admin-quick-images');
             if (quickImgsContainer) {
@@ -365,25 +373,25 @@
         }
 
         bindEvents() {
-            // 1. Escuchar submit del login en header (admin / 1111)
+            // 1. Escuchar submit del login en header
             const loginForm = document.querySelector('.login-form');
             if (loginForm) {
-                // Agregar sugerencia visual si no existe
-                if (!loginForm.querySelector('.login-hint-box')) {
-                    const hint = document.createElement('div');
-                    hint.className = 'login-hint-box';
-                    hint.innerHTML = '<i class="fas fa-user-shield"></i> Acceso Dueño: <strong>admin</strong> | Clave: <strong>1111</strong>';
-                    loginForm.appendChild(hint);
-                }
-
-                loginForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const userInput = loginForm.querySelector('input[type="text"], input[type="email"]');
-                    const passInput = loginForm.querySelector('input[type="password"]');
-                    const submitBtn = loginForm.querySelector('button[type="submit"]');
+                const handleLoginSubmit = async (e) => {
+                    if (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                    const userInput = loginForm.querySelector('#login-username') || loginForm.querySelector('input[type="text"], input[type="email"]');
+                    const passInput = loginForm.querySelector('#login-password') || loginForm.querySelector('input[type="password"]');
+                    const submitBtn = loginForm.querySelector('#btn-login-submit') || loginForm.querySelector('button[type="submit"]');
 
                     const userVal = userInput ? userInput.value : '';
                     const passVal = passInput ? passInput.value : '';
+
+                    if (!userVal || !passVal) {
+                        alert('Por favor ingresá tu usuario y contraseña.');
+                        return;
+                    }
 
                     if (submitBtn) {
                         submitBtn.disabled = true;
@@ -394,7 +402,9 @@
                         const res = await this.db.login(userVal, passVal);
                         if (res && res.success) {
                             loginForm.classList.remove('show-log');
+                            this.checkAuthState();
                             this.showToast('¡Bienvenido Dueño! Modo Administrador activado 🍕');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
                         } else {
                             alert(res.message || 'Usuario o contraseña incorrectos.');
                         }
@@ -403,10 +413,16 @@
                     } finally {
                         if (submitBtn) {
                             submitBtn.disabled = false;
-                            submitBtn.innerHTML = 'Iniciar Sesión';
+                            submitBtn.innerHTML = 'Ingresar';
                         }
                     }
-                });
+                };
+
+                loginForm.addEventListener('submit', handleLoginSubmit);
+                const submitBtn = loginForm.querySelector('#btn-login-submit') || loginForm.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.addEventListener('click', handleLoginSubmit);
+                }
             }
 
             // 2. Auth State listener
@@ -938,10 +954,17 @@
         }
     }
 
-    // Inicializar cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', () => {
-        window.adminPanel = new AdminPanel();
-        window.adminPanel.init();
-    });
+    // Inicialización a prueba de fallos (funciona antes o después de DOMContentLoaded)
+    function initAdminPanel() {
+        if (!window.adminPanel) {
+            window.adminPanel = new AdminPanel();
+            window.adminPanel.init();
+        }
+    }
 
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAdminPanel);
+    } else {
+        initAdminPanel();
+    }
 })(window, document);

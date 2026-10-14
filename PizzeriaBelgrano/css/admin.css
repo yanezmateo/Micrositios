@@ -729,20 +729,35 @@ body.admin-mode-active .promo-prices .current-price {
     transform: translateY(-1px);
 }
 
-/* Notice box in Login form */
-.login-hint-box {
-    margin-top: 1.2rem;
-    padding: 0.8rem 1.2rem;
-    background: rgba(234, 88, 12, 0.08);
-    border: 1px dashed rgba(234, 88, 12, 0.4);
-    border-radius: 8px;
-    font-size: 1.2rem;
-    color: #fdba74;
-    text-align: center;
+/* Toast Notice Notification */
+.toast-notice {
+    position: fixed;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(24, 24, 27, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #ffffff;
+    border: 1px solid rgba(234, 88, 12, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(234, 88, 12, 0.2);
+    padding: 1.2rem 2.4rem;
+    border-radius: 9999px;
+    font-size: 1.35rem;
+    font-weight: 600;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.login-hint-box strong {
-    color: #ffffff;
+.toast-notice.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
 }
 
 /* Delete Confirm Modal Specific */

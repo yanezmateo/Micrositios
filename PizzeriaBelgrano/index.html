@@ -1,36 +1,42 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- Viewport configured to prevent mobile zooming (user-scalable=no, maximum-scale=1.0) -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#141416">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>¡La Belgrano! | Pizzas al Horno de Leña, Sándwiches Calientes & Fainá | Montevideo</title>
-    <meta name="description" content="¡La Belgrano! en Montevideo: Auténtica pizza al horno de leña, sándwiches calientes, fainá y lemeyun. Delivery rápido y Take Away en Belgrano 2881. Tel: 2481 38 59 | WhatsApp 092884951.">
-    
+    <meta name="description"
+        content="¡La Belgrano! en Montevideo: Auténtica pizza al horno de leña, sándwiches calientes, fainá y lemeyun. Delivery rápido y Take Away en Belgrano 2881. Tel: 2481 38 59 | WhatsApp 092884951.">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
     <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css"/>
-    
+    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="css/all.min.css">
-    
+
     <!-- Normalize CSS -->
     <link rel="stylesheet" href="css/normalize.css">
-    
+
     <!-- Custom Main Styles -->
     <link rel="stylesheet" href="css/main.css">
-    
+
     <!-- Admin & Google Sheets Styles -->
     <link rel="stylesheet" href="css/admin.css">
 </head>
+
 <body>
 
     <!-- Header Section Starts -->
@@ -52,12 +58,12 @@
         <div class="icons">
             <div class="icon-btn fas fa-bars" id="menu-btn" title="Menú de Navegación"></div>
             <div class="icon-btn fas fa-search" id="search-btn" title="Buscar"></div>
-            
+
             <div class="cart-btn-wrapper">
                 <div class="icon-btn fas fa-shopping-cart" id="cart-btn" title="Ver Carrito"></div>
                 <span class="cart-badge" id="cart-badge">0</span>
             </div>
-            
+
             <div class="icon-btn fas fa-user" id="login-btn" title="Mi Cuenta"></div>
         </div>
 
@@ -68,18 +74,11 @@
         </form>
 
         <!-- Login Form Modal -->
-        <form class="login-form" onsubmit="event.preventDefault();">
-            <h3>Mi Cuenta</h3>
-            <input type="text" id="login-username" placeholder="Usuario o Correo (admin)" class="input-field" required autocomplete="username">
-            <input type="password" id="login-password" placeholder="Contraseña (1111)" class="input-field" required autocomplete="current-password">
-            <div class="login-hint-box">
-                <i class="fas fa-shield-alt"></i> Acceso Dueño: <strong>admin</strong> | Clave: <strong>1111</strong>
-            </div>
-            <div class="form-links">
-                <p>¿Olvidaste tu contraseña? <a href="#">Recuperar</a></p>
-                <p>¿No tenés cuenta? <a href="#">Registrate</a></p>
-            </div>
-            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+        <form class="login-form" id="login-form">
+            <h3>Iniciar Sesión</h3>
+            <input type="text" id="login-username" placeholder="Usuario o Correo" class="input-field" required autocomplete="username">
+            <input type="password" id="login-password" placeholder="Contraseña" class="input-field" required autocomplete="current-password">
+            <button type="submit" id="btn-login-submit" class="btn btn-primary">Ingresar</button>
         </form>
     </header>
     <!-- Header Section Ends -->
@@ -89,7 +88,7 @@
 
     <!-- Shopping Cart Drawer & Overlay Starts -->
     <div class="cart-overlay"></div>
-    
+
     <div class="cart-drawer">
         <div class="cart-drawer-header">
             <h3><i class="fas fa-shopping-bag"></i> Tu Pedido</h3>
@@ -106,20 +105,24 @@
             <div class="checkout-form">
                 <h4>Datos para el Envío</h4>
                 <div class="checkout-row">
-                    <input type="text" id="checkout-name" class="checkout-input" placeholder="Tu Nombre y Apellido *" required>
+                    <input type="text" id="checkout-name" class="checkout-input" placeholder="Tu Nombre y Apellido *"
+                        required>
                 </div>
                 <div class="checkout-row">
-                    <input type="text" id="checkout-address" class="checkout-input" placeholder="Dirección de entrega (ej: Belgrano 2881 / Pocitos / Parque Batlle) *" required>
+                    <input type="text" id="checkout-address" class="checkout-input"
+                        placeholder="Dirección de entrega (ej: Belgrano 2881 / Pocitos / Parque Batlle) *" required>
                 </div>
                 <div class="checkout-row">
                     <select id="checkout-payment" class="checkout-select">
                         <option value="Efectivo">Pago: Efectivo (al recibir en pesos uruguayos)</option>
                         <option value="Transferencia / Prex">Pago: Transferencia Bancaria / Prex</option>
-                        <option value="Tarjeta de Débito/Crédito (POS)">Pago: Tarjeta de Débito/Crédito (con POS)</option>
+                        <option value="Tarjeta de Débito/Crédito (POS)">Pago: Tarjeta de Débito/Crédito (con POS)
+                        </option>
                     </select>
                 </div>
                 <div class="checkout-row">
-                    <input type="text" id="checkout-notes" class="checkout-input" placeholder="Aclaraciones de entrega (ej: depto, timbre, retirar en local)">
+                    <input type="text" id="checkout-notes" class="checkout-input"
+                        placeholder="Aclaraciones de entrega (ej: depto, timbre, retirar en local)">
                 </div>
             </div>
 
@@ -152,23 +155,28 @@
         <div class="custom-modal-body">
             <div class="modal-product-preview">
                 <img id="modal-image" src="images/product-1.png" alt="Producto">
-                <p id="modal-description" class="modal-desc">Salsa casera, mozzarella fior di latte, albahaca fresca y oliva virgen extra.</p>
+                <p id="modal-description" class="modal-desc">Salsa casera, mozzarella fior di latte, albahaca fresca y
+                    oliva virgen extra.</p>
             </div>
 
             <!-- Quantity Selector -->
             <div class="modal-section modal-qty-section">
                 <label class="modal-section-label"><i class="fas fa-sort-numeric-up"></i> Cantidad de unidades:</label>
                 <div class="modal-qty-control">
-                    <button type="button" class="modal-qty-btn" id="modal-qty-minus" aria-label="Disminuir"><i class="fas fa-minus"></i></button>
+                    <button type="button" class="modal-qty-btn" id="modal-qty-minus" aria-label="Disminuir"><i
+                            class="fas fa-minus"></i></button>
                     <span class="modal-qty-number" id="modal-qty-val">1</span>
-                    <button type="button" class="modal-qty-btn" id="modal-qty-plus" aria-label="Aumentar"><i class="fas fa-plus"></i></button>
+                    <button type="button" class="modal-qty-btn" id="modal-qty-plus" aria-label="Aumentar"><i
+                            class="fas fa-plus"></i></button>
                 </div>
             </div>
 
             <!-- Customization Options (Ingredients or Beverage Variants) -->
             <div class="modal-section" id="modal-options-section">
-                <label class="modal-section-label" id="modal-options-label"><i class="fas fa-sliders-h"></i> Personalizá tu producto:</label>
-                <p class="modal-options-help" id="modal-options-help">Ingredientes incluidos por defecto. Desmarcá el que prefieras quitar:</p>
+                <label class="modal-section-label" id="modal-options-label"><i class="fas fa-sliders-h"></i> Personalizá
+                    tu producto:</label>
+                <p class="modal-options-help" id="modal-options-help">Ingredientes incluidos por defecto. Desmarcá el
+                    que prefieras quitar:</p>
                 <div class="modal-options-container" id="modal-options-container">
                     <!-- Injected by JS -->
                 </div>
@@ -177,7 +185,8 @@
 
         <div class="custom-modal-footer">
             <button type="button" class="btn btn-primary btn-modal-confirm" id="modal-confirm-btn">
-                <i class="fas fa-plus-circle"></i> <span>Agregar al Pedido</span> • <strong id="modal-total-display">$9.500</strong>
+                <i class="fas fa-plus-circle"></i> <span>Agregar al Pedido</span> • <strong
+                    id="modal-total-display">$9.500</strong>
             </button>
         </div>
     </div>
@@ -196,8 +205,9 @@
     <section class="home Inicio" id="Inicio">
         <div class="hero-content content">
             <h1>¡La Belgrano! <span>Horno a Leña</span> en Montevideo</h1>
-            <p>Pizzas crocantes, sándwiches calientes dorados al fuego, fainá y lemeyun tradicional. Hacé tu pedido online en segundos y disfrutalo recién horneado en tu casa.</p>
-            
+            <p>Pizzas crocantes, sándwiches calientes dorados al fuego, fainá y lemeyun tradicional. Hacé tu pedido
+                online en segundos y disfrutalo recién horneado en tu casa.</p>
+
             <div class="hero-actions">
                 <a href="#Menú" class="btn btn-primary btn-hero-menu">
                     <i class="fas fa-utensils"></i> Ver Menú & Precios
@@ -217,7 +227,7 @@
                     <div class="feature-icon"><i class="fas fa-motorcycle"></i></div>
                     <div class="feature-text">
                         <strong>Envíos en Montevideo</strong>
-                        <small>Parque Batlle y zonas</small>
+                        <small>Parque Batlle y sus alrededores</small>
                     </div>
                 </div>
                 <div class="hero-feature-item">
@@ -244,7 +254,8 @@
         <div class="heading-wrapper">
             <div class="section-badge">¡Ahorrá en Grande!</div>
             <h2 class="heading-title">Promociones & <span>Combos Especiales</span></h2>
-            <p class="heading-subtitle">Los combos más pedidos para compartir con amigos o en familia al mejor precio directo.</p>
+            <p class="heading-subtitle">Los combos más pedidos para compartir con amigos o en familia al mejor precio
+                directo.</p>
         </div>
 
         <div class="promos-grid">
@@ -262,17 +273,15 @@
                             <span class="current-price">$1.190</span>
                         </div>
                     </div>
-                    <p class="promo-desc">1 metro de masa artesanal al horno de leña (mitad Muzzarella clásica y mitad Jamón cocido con morrones asados) + 2 refrescos de 1.5L bien fríos.</p>
+                    <p class="promo-desc">1 metro de masa artesanal al horno de leña (mitad Muzzarella clásica y mitad
+                        Jamón cocido con morrones asados) + 2 refrescos de 1.5L bien fríos.</p>
                     <div class="promo-footer-row">
                         <span class="promo-saving-pill"><i class="fas fa-tag"></i> 15% de Ahorro</span>
-                        <button class="btn-add-to-cart btn-promo-add"
-                                data-id="promo-metro-pizza"
-                                data-name="1 Metro de Pizza + 2 Refrescos 1.5L"
-                                data-price="1190"
-                                data-image="images/promo-metro-pizza.jpg"
-                                data-category="promos"
-                                data-ingredients="Mitad Muzzarella, Mitad Jamón cocido y morrones, 2 Refrescos 1.5L"
-                                data-desc="1 metro completo de masa a la leña con 2 refrescos grandes a elección.">
+                        <button class="btn-add-to-cart btn-promo-add" data-id="promo-metro-pizza"
+                            data-name="1 Metro de Pizza + 2 Refrescos 1.5L" data-price="1190"
+                            data-image="images/promo-metro-pizza.jpg" data-category="promos"
+                            data-ingredients="Mitad Muzzarella, Mitad Jamón cocido y morrones, 2 Refrescos 1.5L"
+                            data-desc="1 metro completo de masa a la leña con 2 refrescos grandes a elección.">
                             <i class="fas fa-plus"></i> Agregar Promo
                         </button>
                     </div>
@@ -293,17 +302,15 @@
                             <span class="current-price">$690</span>
                         </div>
                     </div>
-                    <p class="promo-desc">1 Pizza Grande de Muzzarella al horno de leña + 2 porciones de Fainá dorada crocante con pimienta y orégano + 1 Refresco 1.5L a elección.</p>
+                    <p class="promo-desc">1 Pizza Grande de Muzzarella al horno de leña + 2 porciones de Fainá dorada
+                        crocante con pimienta y orégano + 1 Refresco 1.5L a elección.</p>
                     <div class="promo-footer-row">
                         <span class="promo-saving-pill"><i class="fas fa-tag"></i> Ahorrá $100</span>
-                        <button class="btn-add-to-cart btn-promo-add"
-                                data-id="promo-tradicional"
-                                data-name="Combo Tradicional: Pizza + 2 Fainá + Refresco"
-                                data-price="690"
-                                data-image="images/product-faina.jpg"
-                                data-category="promos"
-                                data-ingredients="Pizza Grande Muzzarella, 2 Porciones de Fainá, 1 Refresco 1.5L"
-                                data-desc="La combinación clásica uruguaya: pizza a la leña con doble fainá crocante y refresco.">
+                        <button class="btn-add-to-cart btn-promo-add" data-id="promo-tradicional"
+                            data-name="Combo Tradicional: Pizza + 2 Fainá + Refresco" data-price="690"
+                            data-image="images/product-faina.jpg" data-category="promos"
+                            data-ingredients="Pizza Grande Muzzarella, 2 Porciones de Fainá, 1 Refresco 1.5L"
+                            data-desc="La combinación clásica uruguaya: pizza a la leña con doble fainá crocante y refresco.">
                             <i class="fas fa-plus"></i> Agregar Promo
                         </button>
                     </div>
@@ -324,17 +331,15 @@
                             <span class="current-price">$890</span>
                         </div>
                     </div>
-                    <p class="promo-desc">1 Pizza Grande de Muzzarella a la leña + 4 Lemeyun tradicionales armenios crocantes con gajos de limón + 1 Cerveza Artesanal 500ml fría.</p>
+                    <p class="promo-desc">1 Pizza Grande de Muzzarella a la leña + 4 Lemeyun tradicionales armenios
+                        crocantes con gajos de limón + 1 Cerveza Artesanal 500ml fría.</p>
                     <div class="promo-footer-row">
                         <span class="promo-saving-pill"><i class="fas fa-tag"></i> Ahorrá $100</span>
-                        <button class="btn-add-to-cart btn-promo-add"
-                                data-id="promo-fusion"
-                                data-name="Combo Amigos: Pizza + 4 Lemeyun + Cerveza"
-                                data-price="890"
-                                data-image="images/product-lemeyun.jpg"
-                                data-category="promos"
-                                data-ingredients="Pizza Grande Muzzarella, 4 Lemeyun, 1 Cerveza 500ml"
-                                data-desc="Fusión perfecta de pizza artesanal con 4 auténticos lemeyun y cerveza artesanal fría.">
+                        <button class="btn-add-to-cart btn-promo-add" data-id="promo-fusion"
+                            data-name="Combo Amigos: Pizza + 4 Lemeyun + Cerveza" data-price="890"
+                            data-image="images/product-lemeyun.jpg" data-category="promos"
+                            data-ingredients="Pizza Grande Muzzarella, 4 Lemeyun, 1 Cerveza 500ml"
+                            data-desc="Fusión perfecta de pizza artesanal con 4 auténticos lemeyun y cerveza artesanal fría.">
                             <i class="fas fa-plus"></i> Agregar Promo
                         </button>
                     </div>
@@ -355,17 +360,15 @@
                             <span class="current-price">$490</span>
                         </div>
                     </div>
-                    <p class="promo-desc">2 Pizzetas individuales a elección horneadas a la leña + 2 bebidas individuales frías.</p>
+                    <p class="promo-desc">2 Pizzetas individuales a elección horneadas a la leña + 2 bebidas
+                        individuales frías.</p>
                     <div class="promo-footer-row">
                         <span class="promo-saving-pill"><i class="fas fa-tag"></i> Ahorrá $90</span>
-                        <button class="btn-add-to-cart btn-promo-add"
-                                data-id="promo-pareja"
-                                data-name="Promo Pareja: 2 Pizzetas + 2 Bebidas"
-                                data-price="490"
-                                data-image="images/product-fugazza.jpg"
-                                data-category="promos"
-                                data-ingredients="2 Pizzetas individuales, 2 Bebidas"
-                                data-desc="El combo perfecto para dos personas con sabor artesanal.">
+                        <button class="btn-add-to-cart btn-promo-add" data-id="promo-pareja"
+                            data-name="Promo Pareja: 2 Pizzetas + 2 Bebidas" data-price="490"
+                            data-image="images/product-fugazza.jpg" data-category="promos"
+                            data-ingredients="2 Pizzetas individuales, 2 Bebidas"
+                            data-desc="El combo perfecto para dos personas con sabor artesanal.">
                             <i class="fas fa-plus"></i> Agregar Promo
                         </button>
                     </div>
@@ -380,7 +383,8 @@
         <div class="heading-wrapper">
             <div class="section-badge">Nuestra Carta</div>
             <h2 class="heading-title">Explorá Nuestro <span>Menú</span></h2>
-            <p class="heading-subtitle">Elegí tus favoritos y agregalos al pedido para enviar directamente por <span class="whatsapp-brand-text"><i class="fab fa-whatsapp"></i> WhatsApp</span>.</p>
+            <p class="heading-subtitle">Elegí tus favoritos y agregalos al pedido para enviar directamente por <span
+                    class="whatsapp-brand-text"><i class="fab fa-whatsapp"></i> WhatsApp</span>.</p>
         </div>
 
         <!-- Filter Buttons: Todos, Pizzas, Sándwiches, Fainá, Lemeyun, Bebidas -->
@@ -401,8 +405,10 @@
                     <p>Masa madre con fermentación lenta, salsa natural casera y queso mozzarella fior di latte</p>
                 </div>
                 <div class="carousel-nav-arrows">
-                    <button class="nav-arrow prev-pizzas" aria-label="Pizza anterior"><i class="fas fa-chevron-left"></i></button>
-                    <button class="nav-arrow next-pizzas" aria-label="Siguiente pizza"><i class="fas fa-chevron-right"></i></button>
+                    <button class="nav-arrow prev-pizzas" aria-label="Pizza anterior"><i
+                            class="fas fa-chevron-left"></i></button>
+                    <button class="nav-arrow next-pizzas" aria-label="Siguiente pizza"><i
+                            class="fas fa-chevron-right"></i></button>
                 </div>
             </div>
 
@@ -418,7 +424,8 @@
                                 <h3>Pizza Margarita</h3>
                                 <span class="price">$420</span>
                             </div>
-                            <p class="product-description">Salsa de tomate casera San Marzano, mozzarella fior di latte, hojas de albahaca fresca y oliva virgen extra.</p>
+                            <p class="product-description">Salsa de tomate casera San Marzano, mozzarella fior di latte,
+                                hojas de albahaca fresca y oliva virgen extra.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -427,14 +434,10 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="pizza-margarita" 
-                                        data-name="Pizza Margarita" 
-                                        data-price="420" 
-                                        data-image="images/product-1.png"
-                                        data-category="pizzas"
-                                        data-ingredients="Salsa de tomate, Mozzarella, Albahaca, Aceite de oliva"
-                                        data-desc="Salsa de tomate casera San Marzano, mozzarella fior di latte, albahaca fresca y oliva virgen extra.">
+                                <button class="btn-add-to-cart" data-id="pizza-margarita" data-name="Pizza Margarita"
+                                    data-price="420" data-image="images/product-1.png" data-category="pizzas"
+                                    data-ingredients="Salsa de tomate, Mozzarella, Albahaca, Aceite de oliva"
+                                    data-desc="Salsa de tomate casera San Marzano, mozzarella fior di latte, albahaca fresca y oliva virgen extra.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -451,7 +454,8 @@
                                 <h3>Pizza Pepperoni</h3>
                                 <span class="price">$490</span>
                             </div>
-                            <p class="product-description">Generosa capa de mozzarella fundida, rodajas de pepperoni crocante y toque de orégano silvestre.</p>
+                            <p class="product-description">Generosa capa de mozzarella fundida, rodajas de pepperoni
+                                crocante y toque de orégano silvestre.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -460,14 +464,10 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="pizza-pepperoni" 
-                                        data-name="Pizza Pepperoni" 
-                                        data-price="490" 
-                                        data-image="images/product-2.png"
-                                        data-category="pizzas"
-                                        data-ingredients="Salsa de tomate, Mozzarella, Pepperoni, Orégano"
-                                        data-desc="Generosa capa de mozzarella fundida, rodajas de pepperoni crocante y toque de orégano.">
+                                <button class="btn-add-to-cart" data-id="pizza-pepperoni" data-name="Pizza Pepperoni"
+                                    data-price="490" data-image="images/product-2.png" data-category="pizzas"
+                                    data-ingredients="Salsa de tomate, Mozzarella, Pepperoni, Orégano"
+                                    data-desc="Generosa capa de mozzarella fundida, rodajas de pepperoni crocante y toque de orégano.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -484,7 +484,8 @@
                                 <h3>Fugazzeta Especial</h3>
                                 <span class="price">$540</span>
                             </div>
-                            <p class="product-description">Rellena de abundante mozzarella, cubierta de finas tiras de cebolla caramelizada dulce y orégano.</p>
+                            <p class="product-description">Rellena de abundante mozzarella, cubierta de finas tiras de
+                                cebolla caramelizada dulce y orégano.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -493,14 +494,10 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="pizza-fugazzeta" 
-                                        data-name="Fugazzeta Especial" 
-                                        data-price="540" 
-                                        data-image="images/cat-fugazzeta.jpg"
-                                        data-category="pizzas"
-                                        data-ingredients="Mozzarella, Cebolla caramelizada, Orégano, Aceite de oliva"
-                                        data-desc="Rellena de abundante mozzarella con cebolla caramelizada dulce dorada al horno.">
+                                <button class="btn-add-to-cart" data-id="pizza-fugazzeta" data-name="Fugazzeta Especial"
+                                    data-price="540" data-image="images/cat-fugazzeta.jpg" data-category="pizzas"
+                                    data-ingredients="Mozzarella, Cebolla caramelizada, Orégano, Aceite de oliva"
+                                    data-desc="Rellena de abundante mozzarella con cebolla caramelizada dulce dorada al horno.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -517,7 +514,8 @@
                                 <h3>Pizza Napolitana</h3>
                                 <span class="price">$470</span>
                             </div>
-                            <p class="product-description">Mozzarella fundida, rodajas de tomate natural fresco, provolone rallado, ajo picado y albahaca.</p>
+                            <p class="product-description">Mozzarella fundida, rodajas de tomate natural fresco,
+                                provolone rallado, ajo picado y albahaca.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -526,14 +524,10 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star-half-alt"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="pizza-napolitana" 
-                                        data-name="Pizza Napolitana" 
-                                        data-price="470" 
-                                        data-image="images/cat-1.png"
-                                        data-category="pizzas"
-                                        data-ingredients="Salsa de tomate, Mozzarella, Rodajas de tomate, Ajo, Provolone, Albahaca"
-                                        data-desc="Mozzarella fundida, tomate fresco, provolone rallado, ajo y albahaca fresca.">
+                                <button class="btn-add-to-cart" data-id="pizza-napolitana" data-name="Pizza Napolitana"
+                                    data-price="470" data-image="images/cat-1.png" data-category="pizzas"
+                                    data-ingredients="Salsa de tomate, Mozzarella, Rodajas de tomate, Ajo, Provolone, Albahaca"
+                                    data-desc="Mozzarella fundida, tomate fresco, provolone rallado, ajo y albahaca fresca.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -550,7 +544,8 @@
                                 <h3>Pizza Figazza Tradicional</h3>
                                 <span class="price">$390</span>
                             </div>
-                            <p class="product-description">Masa crocante dorada a la leña, colchón de cebollas dulces confitadas, orégano y generoso aceite de oliva.</p>
+                            <p class="product-description">Masa crocante dorada a la leña, colchón de cebollas dulces
+                                confitadas, orégano y generoso aceite de oliva.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -559,14 +554,11 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="pizza-figazza" 
-                                        data-name="Pizza Figazza Tradicional" 
-                                        data-price="390" 
-                                        data-image="images/product-fugazza.jpg"
-                                        data-category="pizzas"
-                                        data-ingredients="Cebolla, Orégano, Aceite de oliva"
-                                        data-desc="Masa crocante dorada a la leña con colchón de cebollas dulces confitadas y oliva.">
+                                <button class="btn-add-to-cart" data-id="pizza-figazza"
+                                    data-name="Pizza Figazza Tradicional" data-price="390"
+                                    data-image="images/product-fugazza.jpg" data-category="pizzas"
+                                    data-ingredients="Cebolla, Orégano, Aceite de oliva"
+                                    data-desc="Masa crocante dorada a la leña con colchón de cebollas dulces confitadas y oliva.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -584,8 +576,10 @@
                     <p>Pan tostado crocante al horno a leña, abundante muzzarella fundida, jamón y especialidades</p>
                 </div>
                 <div class="carousel-nav-arrows">
-                    <button class="nav-arrow prev-sandwiches" aria-label="Sándwich anterior"><i class="fas fa-chevron-left"></i></button>
-                    <button class="nav-arrow next-sandwiches" aria-label="Siguiente sándwich"><i class="fas fa-chevron-right"></i></button>
+                    <button class="nav-arrow prev-sandwiches" aria-label="Sándwich anterior"><i
+                            class="fas fa-chevron-left"></i></button>
+                    <button class="nav-arrow next-sandwiches" aria-label="Siguiente sándwich"><i
+                            class="fas fa-chevron-right"></i></button>
                 </div>
             </div>
 
@@ -601,7 +595,8 @@
                                 <h3>Sándwich Caliente Clásico</h3>
                                 <span class="price">$280</span>
                             </div>
-                            <p class="product-description">Pan de miga tostado al horno a leña con abundante jamón cocido seleccionado y queso muzzarella derretido.</p>
+                            <p class="product-description">Pan de miga tostado al horno a leña con abundante jamón
+                                cocido seleccionado y queso muzzarella derretido.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -610,14 +605,11 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="sandwich-clasico" 
-                                        data-name="Sándwich Caliente Clásico" 
-                                        data-price="280" 
-                                        data-image="images/product-sandwich-clasico.jpg"
-                                        data-category="sandwiches"
-                                        data-ingredients="Jamón cocido, Muzzarella derretida, Manteca dorada"
-                                        data-desc="Pan de miga crocante al horno a leña con doble jamón cocido y abundante muzzarella fundida.">
+                                <button class="btn-add-to-cart" data-id="sandwich-clasico"
+                                    data-name="Sándwich Caliente Clásico" data-price="280"
+                                    data-image="images/product-sandwich-clasico.jpg" data-category="sandwiches"
+                                    data-ingredients="Jamón cocido, Muzzarella derretida, Manteca dorada"
+                                    data-desc="Pan de miga crocante al horno a leña con doble jamón cocido y abundante muzzarella fundida.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -634,7 +626,8 @@
                                 <h3>Sándwich Caliente Napolitano</h3>
                                 <span class="price">$320</span>
                             </div>
-                            <p class="product-description">Doble jamón cocido, muzzarella fundida, rodajas de tomate fresco, toque de orégano y oliva al horno a leña.</p>
+                            <p class="product-description">Doble jamón cocido, muzzarella fundida, rodajas de tomate
+                                fresco, toque de orégano y oliva al horno a leña.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -643,14 +636,11 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="sandwich-napolitano" 
-                                        data-name="Sándwich Caliente Napolitano" 
-                                        data-price="320" 
-                                        data-image="images/product-sandwich-napolitano.jpg"
-                                        data-category="sandwiches"
-                                        data-ingredients="Jamón cocido, Muzzarella, Rodajas de tomate, Orégano, Aceite de oliva"
-                                        data-desc="Especial napolitano con jamón, muzzarella fundida, tomate fresco y orégano al horno.">
+                                <button class="btn-add-to-cart" data-id="sandwich-napolitano"
+                                    data-name="Sándwich Caliente Napolitano" data-price="320"
+                                    data-image="images/product-sandwich-napolitano.jpg" data-category="sandwiches"
+                                    data-ingredients="Jamón cocido, Muzzarella, Rodajas de tomate, Orégano, Aceite de oliva"
+                                    data-desc="Especial napolitano con jamón, muzzarella fundida, tomate fresco y orégano al horno.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -667,7 +657,8 @@
                                 <h3>Sándwich Caliente Especial</h3>
                                 <span class="price">$370</span>
                             </div>
-                            <p class="product-description">Jamón cocido, queso muzzarella, huevo a la plancha, panceta dorada y morrones asados al horno.</p>
+                            <p class="product-description">Jamón cocido, queso muzzarella, huevo a la plancha, panceta
+                                dorada y morrones asados al horno.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -676,14 +667,11 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="sandwich-especial" 
-                                        data-name="Sándwich Caliente Especial" 
-                                        data-price="370" 
-                                        data-image="images/product-sandwich-napolitano.jpg"
-                                        data-category="sandwiches"
-                                        data-ingredients="Jamón cocido, Muzzarella, Huevo, Panceta crocante, Morrones asados"
-                                        data-desc="Super completo con jamón, queso derretido, huevo, panceta y morrones asados al horno de leña.">
+                                <button class="btn-add-to-cart" data-id="sandwich-especial"
+                                    data-name="Sándwich Caliente Especial" data-price="370"
+                                    data-image="images/product-sandwich-napolitano.jpg" data-category="sandwiches"
+                                    data-ingredients="Jamón cocido, Muzzarella, Huevo, Panceta crocante, Morrones asados"
+                                    data-desc="Super completo con jamón, queso derretido, huevo, panceta y morrones asados al horno de leña.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -700,7 +688,8 @@
                                 <h3>Chivito al Pan Clásico</h3>
                                 <span class="price">$450</span>
                             </div>
-                            <p class="product-description">Lomo tierno a la plancha, jamón, queso muzzarella derretido, lechuga, tomate y mayonesa en pan tortuga.</p>
+                            <p class="product-description">Lomo tierno a la plancha, jamón, queso muzzarella derretido,
+                                lechuga, tomate y mayonesa en pan tortuga.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -709,14 +698,11 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="chivito-al-pan" 
-                                        data-name="Chivito al Pan Clásico" 
-                                        data-price="450" 
-                                        data-image="images/product-sandwich-clasico.jpg"
-                                        data-category="sandwiches"
-                                        data-ingredients="Lomo vacuno, Jamón cocido, Muzzarella, Lechuga, Tomate, Mayonesa"
-                                        data-desc="Auténtico chivito uruguayo al pan con lomo tierno, muzzarella, jamón, lechuga y tomate fresco.">
+                                <button class="btn-add-to-cart" data-id="chivito-al-pan"
+                                    data-name="Chivito al Pan Clásico" data-price="450"
+                                    data-image="images/product-sandwich-clasico.jpg" data-category="sandwiches"
+                                    data-ingredients="Lomo vacuno, Jamón cocido, Muzzarella, Lechuga, Tomate, Mayonesa"
+                                    data-desc="Auténtico chivito uruguayo al pan con lomo tierno, muzzarella, jamón, lechuga y tomate fresco.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -731,11 +717,14 @@
             <div class="category-block-header">
                 <div class="cat-header-info">
                     <h3><i class="fas fa-layer-group"></i> Fainá Tradicional & Rellena</h3>
-                    <p>Elaborada a base de harina de garbanzos pura, piso crocante y corazón suave horneado a la leña</p>
+                    <p>Elaborada a base de harina de garbanzos pura, piso crocante y corazón suave horneado a la leña
+                    </p>
                 </div>
                 <div class="carousel-nav-arrows">
-                    <button class="nav-arrow prev-faina" aria-label="Fainá anterior"><i class="fas fa-chevron-left"></i></button>
-                    <button class="nav-arrow next-faina" aria-label="Siguiente fainá"><i class="fas fa-chevron-right"></i></button>
+                    <button class="nav-arrow prev-faina" aria-label="Fainá anterior"><i
+                            class="fas fa-chevron-left"></i></button>
+                    <button class="nav-arrow next-faina" aria-label="Siguiente fainá"><i
+                            class="fas fa-chevron-right"></i></button>
                 </div>
             </div>
 
@@ -751,7 +740,8 @@
                                 <h3>Fainá Clásica a la Leña</h3>
                                 <span class="price">$110</span>
                             </div>
-                            <p class="product-description">Porción individual gruesa, piso dorado y crujiente, condimentada con pimienta negra molida y orégano.</p>
+                            <p class="product-description">Porción individual gruesa, piso dorado y crujiente,
+                                condimentada con pimienta negra molida y orégano.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -760,14 +750,11 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="faina-clasica" 
-                                        data-name="Fainá Clásica a la Leña" 
-                                        data-price="110" 
-                                        data-image="images/product-faina.jpg"
-                                        data-category="faina"
-                                        data-ingredients="Pimienta negra, Orégano"
-                                        data-desc="Porción tradicional dorada a la leña con pimienta negra recién molida y orégano.">
+                                <button class="btn-add-to-cart" data-id="faina-clasica"
+                                    data-name="Fainá Clásica a la Leña" data-price="110"
+                                    data-image="images/product-faina.jpg" data-category="faina"
+                                    data-ingredients="Pimienta negra, Orégano"
+                                    data-desc="Porción tradicional dorada a la leña con pimienta negra recién molida y orégano.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -784,7 +771,8 @@
                                 <h3>Fainá Rellena Jamón & Queso</h3>
                                 <span class="price">$190</span>
                             </div>
-                            <p class="product-description">Doble capa de fainá dorada rellena con abundante mozzarella hilada fundida y jamón cocido seleccionado.</p>
+                            <p class="product-description">Doble capa de fainá dorada rellena con abundante mozzarella
+                                hilada fundida y jamón cocido seleccionado.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -793,14 +781,11 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="faina-rellena" 
-                                        data-name="Fainá Rellena Jamón & Queso" 
-                                        data-price="190" 
-                                        data-image="images/product-faina-rellena.jpg"
-                                        data-category="faina"
-                                        data-ingredients="Mozzarella, Jamón cocido, Pimienta negra, Orégano"
-                                        data-desc="Doble capa crujiente con abundante mozzarella hilada y jamón cocido.">
+                                <button class="btn-add-to-cart" data-id="faina-rellena"
+                                    data-name="Fainá Rellena Jamón & Queso" data-price="190"
+                                    data-image="images/product-faina-rellena.jpg" data-category="faina"
+                                    data-ingredients="Mozzarella, Jamón cocido, Pimienta negra, Orégano"
+                                    data-desc="Doble capa crujiente con abundante mozzarella hilada y jamón cocido.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -815,11 +800,14 @@
             <div class="category-block-header">
                 <div class="cat-header-info">
                     <h3><i class="fas fa-fire-alt"></i> Lemeyun Armenio a la Leña</h3>
-                    <p>Masa extra fina y crujiente, carne vacuna de primera picada con vegetales frescos y especias auténticas</p>
+                    <p>Masa extra fina y crujiente, carne vacuna de primera picada con vegetales frescos y especias
+                        auténticas</p>
                 </div>
                 <div class="carousel-nav-arrows">
-                    <button class="nav-arrow prev-lemeyun" aria-label="Lemeyun anterior"><i class="fas fa-chevron-left"></i></button>
-                    <button class="nav-arrow next-lemeyun" aria-label="Siguiente lemeyun"><i class="fas fa-chevron-right"></i></button>
+                    <button class="nav-arrow prev-lemeyun" aria-label="Lemeyun anterior"><i
+                            class="fas fa-chevron-left"></i></button>
+                    <button class="nav-arrow next-lemeyun" aria-label="Siguiente lemeyun"><i
+                            class="fas fa-chevron-right"></i></button>
                 </div>
             </div>
 
@@ -835,7 +823,8 @@
                                 <h3>Lemeyun Tradicional</h3>
                                 <span class="price">$130</span>
                             </div>
-                            <p class="product-description">Masa fina crocante con carne vacuna seleccionada, tomate picado, cebolla, perejil y gajos de limón fresco.</p>
+                            <p class="product-description">Masa fina crocante con carne vacuna seleccionada, tomate
+                                picado, cebolla, perejil y gajos de limón fresco.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -844,14 +833,11 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="lemeyun-tradicional" 
-                                        data-name="Lemeyun Tradicional" 
-                                        data-price="130" 
-                                        data-image="images/product-lemeyun.jpg"
-                                        data-category="lemeyun"
-                                        data-ingredients="Carne vacuna, Tomate, Cebolla, Perejil, Especias, Limón"
-                                        data-desc="Auténtico lemeyun armenio horneado a la leña, servido con limón fresco.">
+                                <button class="btn-add-to-cart" data-id="lemeyun-tradicional"
+                                    data-name="Lemeyun Tradicional" data-price="130"
+                                    data-image="images/product-lemeyun.jpg" data-category="lemeyun"
+                                    data-ingredients="Carne vacuna, Tomate, Cebolla, Perejil, Especias, Limón"
+                                    data-desc="Auténtico lemeyun armenio horneado a la leña, servido con limón fresco.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -868,7 +854,8 @@
                                 <h3>Lemeyun Especial con Queso</h3>
                                 <span class="price">$160</span>
                             </div>
-                            <p class="product-description">Nuestra receta tradicional cubierta con una capa gratinada de mozzarella suave y dorada al horno de barro.</p>
+                            <p class="product-description">Nuestra receta tradicional cubierta con una capa gratinada de
+                                mozzarella suave y dorada al horno de barro.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -877,14 +864,11 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="lemeyun-queso" 
-                                        data-name="Lemeyun Especial con Queso" 
-                                        data-price="160" 
-                                        data-image="images/product-lemeyun.jpg"
-                                        data-category="lemeyun"
-                                        data-ingredients="Carne vacuna, Mozzarella, Tomate, Cebolla, Perejil, Limón"
-                                        data-desc="Lemeyun a la leña gratinado con mozzarella suave derretida y limón.">
+                                <button class="btn-add-to-cart" data-id="lemeyun-queso"
+                                    data-name="Lemeyun Especial con Queso" data-price="160"
+                                    data-image="images/product-lemeyun.jpg" data-category="lemeyun"
+                                    data-ingredients="Carne vacuna, Mozzarella, Tomate, Cebolla, Perejil, Limón"
+                                    data-desc="Lemeyun a la leña gratinado con mozzarella suave derretida y limón.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -902,8 +886,10 @@
                     <p>Refrescos de 1.5L fríos y cerveza artesanal tirada</p>
                 </div>
                 <div class="carousel-nav-arrows">
-                    <button class="nav-arrow prev-bebidas" aria-label="Bebida anterior"><i class="fas fa-chevron-left"></i></button>
-                    <button class="nav-arrow next-bebidas" aria-label="Siguiente bebida"><i class="fas fa-chevron-right"></i></button>
+                    <button class="nav-arrow prev-bebidas" aria-label="Bebida anterior"><i
+                            class="fas fa-chevron-left"></i></button>
+                    <button class="nav-arrow next-bebidas" aria-label="Siguiente bebida"><i
+                            class="fas fa-chevron-right"></i></button>
                 </div>
             </div>
 
@@ -919,7 +905,8 @@
                                 <h3>Coca-Cola 1.5L</h3>
                                 <span class="price">$170</span>
                             </div>
-                            <p class="product-description">Botella de 1.5L bien fría. Variantes: Común, Zero y Light.</p>
+                            <p class="product-description">Botella de 1.5L bien fría. Variantes: Común, Zero y Light.
+                            </p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -928,14 +915,10 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="gaseosa-cola" 
-                                        data-name="Coca-Cola 1.5L" 
-                                        data-price="170" 
-                                        data-image="images/product-gaseosa.jpg" 
-                                        data-category="bebidas"
-                                        data-variants="Común, Zero, Light"
-                                        data-desc="Botella plástica sellada de 1.5L bien fría. Elegí tu variante preferida.">
+                                <button class="btn-add-to-cart" data-id="gaseosa-cola" data-name="Coca-Cola 1.5L"
+                                    data-price="170" data-image="images/product-gaseosa.jpg" data-category="bebidas"
+                                    data-variants="Común, Zero, Light"
+                                    data-desc="Botella plástica sellada de 1.5L bien fría. Elegí tu variante preferida.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -961,14 +944,11 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="gaseosa-sprite" 
-                                        data-name="Sprite Lima-Limón 1.5L" 
-                                        data-price="170" 
-                                        data-image="images/product-sprite.jpg" 
-                                        data-category="bebidas"
-                                        data-variants="Común, Zero"
-                                        data-desc="Botella de 1.5L bien fría con intenso sabor lima-limón.">
+                                <button class="btn-add-to-cart" data-id="gaseosa-sprite"
+                                    data-name="Sprite Lima-Limón 1.5L" data-price="170"
+                                    data-image="images/product-sprite.jpg" data-category="bebidas"
+                                    data-variants="Común, Zero"
+                                    data-desc="Botella de 1.5L bien fría con intenso sabor lima-limón.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -994,14 +974,10 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="gaseosa-pomelo" 
-                                        data-name="Pomelo 1.5L" 
-                                        data-price="170" 
-                                        data-image="images/product-pomelo.jpg" 
-                                        data-category="bebidas"
-                                        data-variants="Común, Zero"
-                                        data-desc="Botella de 1.5L bien fría con sabor cítrico de pomelo.">
+                                <button class="btn-add-to-cart" data-id="gaseosa-pomelo" data-name="Pomelo 1.5L"
+                                    data-price="170" data-image="images/product-pomelo.jpg" data-category="bebidas"
+                                    data-variants="Común, Zero"
+                                    data-desc="Botella de 1.5L bien fría con sabor cítrico de pomelo.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -1018,7 +994,8 @@
                                 <h3>Cerveza Artesanal 500ml</h3>
                                 <span class="price">$210</span>
                             </div>
-                            <p class="product-description">Cerveza artesanal de 500ml bien fría. Variedades: Golden Ale, IPA y Scottish.</p>
+                            <p class="product-description">Cerveza artesanal de 500ml bien fría. Variedades: Golden Ale,
+                                IPA y Scottish.</p>
                             <div class="product-footer-row">
                                 <div class="stars">
                                     <i class="fas fa-star"></i>
@@ -1027,14 +1004,11 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <button class="btn-add-to-cart" 
-                                        data-id="cerveza-artesanal" 
-                                        data-name="Cerveza Artesanal 500ml" 
-                                        data-price="210" 
-                                        data-image="images/product-cerveza.jpg" 
-                                        data-category="bebidas"
-                                        data-variants="Golden Ale, IPA, Scottish"
-                                        data-desc="Botellón artesanal de 500ml servido a temperatura óptima.">
+                                <button class="btn-add-to-cart" data-id="cerveza-artesanal"
+                                    data-name="Cerveza Artesanal 500ml" data-price="210"
+                                    data-image="images/product-cerveza.jpg" data-category="bebidas"
+                                    data-variants="Golden Ale, IPA, Scottish"
+                                    data-desc="Botellón artesanal de 500ml servido a temperatura óptima.">
                                     <i class="fas fa-plus"></i> Agregar
                                 </button>
                             </div>
@@ -1052,7 +1026,8 @@
         <div class="heading-wrapper">
             <div class="section-badge"><i class="fas fa-motorcycle"></i> Envíos en Tiempo Récord</div>
             <h2 class="heading-title">Zona de Cobertura & <span>Delivery</span></h2>
-            <p class="heading-subtitle">Llegamos a tu puerta en Montevideo con cajas térmicas selladas que conservan el calor y la crocancia como recién salido del horno.</p>
+            <p class="heading-subtitle">Llegamos a tu puerta en Montevideo con cajas térmicas selladas que conservan el
+                calor y la crocancia como recién salido del horno.</p>
         </div>
 
         <div class="cobertura-container">
@@ -1062,28 +1037,32 @@
                     <div class="zone-badge"><i class="fas fa-check-circle"></i> Envío Sin Cargo</div>
                     <h3>Zona 1: Parque Batlle, La Blanqueada & Tres Cruces</h3>
                     <p><i class="fas fa-clock"></i> <strong>Tiempo estimado:</strong> 20 a 30 minutos</p>
-                    <p class="zone-desc">Belgrano, Av. Dr. Américo Ricaldoni, Av. Italia, Bv. Artigas, 8 de Octubre, Estadio Centenario, Hospital Británico y alrededores.</p>
+                    <p class="zone-desc">Belgrano, Av. Dr. Américo Ricaldoni, Av. Italia, Bv. Artigas, 8 de Octubre,
+                        Estadio Centenario, Hospital Británico y alrededores.</p>
                 </div>
 
                 <div class="delivery-zone-item zone-express">
                     <div class="zone-badge"><i class="fas fa-bolt"></i> Envío Express ($60)</div>
                     <h3>Zona 2: Pocitos, Buceo, Cordón & Parque Rodó</h3>
                     <p><i class="fas fa-clock"></i> <strong>Tiempo estimado:</strong> 30 a 40 minutos</p>
-                    <p class="zone-desc">Av. Brasil, Bv. España, Av. Rivera, Punta Carretas, Centro y zonas aledañas con entrega rápida asegurada.</p>
+                    <p class="zone-desc">Av. Brasil, Bv. España, Av. Rivera, Punta Carretas, Centro y zonas aledañas con
+                        entrega rápida asegurada.</p>
                 </div>
 
                 <div class="delivery-zone-item zone-takeaway">
                     <div class="zone-badge"><i class="fas fa-store"></i> 15% OFF en Efectivo</div>
                     <h3>Take Away / Retiro en Local</h3>
                     <p><i class="fas fa-map-marker-alt"></i> Belgrano 2881, 11600 Montevideo</p>
-                    <p class="zone-desc">Hacé tu pedido por la web y retiralo listo en 15 minutos con descuento especial.</p>
+                    <p class="zone-desc">Hacé tu pedido por la web y retiralo listo en 15 minutos con descuento
+                        especial.</p>
                 </div>
 
                 <!-- Interactive address checker -->
                 <div class="address-checker">
                     <h4><i class="fas fa-search-location"></i> Consultá si llegamos a tu casa</h4>
                     <div class="checker-input-row">
-                        <input type="text" id="delivery-address-input" placeholder="Ingresá tu calle y barrio (ej: Belgrano 2881, Pocitos...)">
+                        <input type="text" id="delivery-address-input"
+                            placeholder="Ingresá tu calle y barrio (ej: Belgrano 2881, Pocitos...)">
                         <button type="button" id="delivery-check-btn" class="btn btn-secondary">Verificar</button>
                     </div>
                     <div id="delivery-status-msg" class="delivery-status-msg"></div>
@@ -1094,10 +1073,9 @@
             <div class="cobertura-map-card">
                 <div class="map-wrapper">
                     <!-- Google Maps Iframe centered in Belgrano 2881, Montevideo -->
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3272.7667230489945!2d-56.1581452!3d-34.8997387!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x959f805a5a1f0a0d%3A0x6b1d491cbe4803b8!2sBelgrano%202881%2C%2011600%20Montevideo%2C%20Departamento%20de%20Montevideo!5e0!3m2!1ses!2suy!4v1710000000000!5m2!1ses!2suy" 
-                        title="Mapa de ubicación y cobertura - ¡La Belgrano! Montevideo" 
-                        loading="lazy" 
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3272.7667230489945!2d-56.1581452!3d-34.8997387!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x959f805a5a1f0a0d%3A0x6b1d491cbe4803b8!2sBelgrano%202881%2C%2011600%20Montevideo%2C%20Departamento%20de%20Montevideo!5e0!3m2!1ses!2suy!4v1710000000000!5m2!1ses!2suy"
+                        title="Mapa de ubicación y cobertura - ¡La Belgrano! Montevideo" loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade">
                     </iframe>
                     <div class="map-floating-pill">
@@ -1114,15 +1092,19 @@
         <div class="heading-wrapper">
             <div class="google-business-badge">
                 <svg class="google-logo" viewBox="0 0 24 24" width="22" height="22">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                    <path fill="#4285F4"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05"
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                    <path fill="#EA4335"
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                 </svg>
                 <span>Reseñas Verificadas en Google Maps</span>
             </div>
             <h2 class="heading-title">Lo que opinan <span>en Google Maps</span></h2>
-            
+
             <!-- Google Maps Rating Summary Header -->
             <div class="google-rating-summary">
                 <div class="google-score-box">
@@ -1142,14 +1124,20 @@
                         <i class="fas fa-check-circle"></i>
                         <span>Perfil de Empresa Verificado en Google</span>
                     </div>
-                    <p class="google-location-tag"><i class="fas fa-map-marker-alt"></i> Belgrano 2881, 11600 Montevideo</p>
+                    <p class="google-location-tag"><i class="fas fa-map-marker-alt"></i> Belgrano 2881, 11600 Montevideo
+                    </p>
                 </div>
-                <a href="https://maps.app.goo.gl/Xh3KRABLHKNPgwCi6" target="_blank" rel="noopener noreferrer" class="btn-google-maps">
+                <a href="https://maps.app.goo.gl/Xh3KRABLHKNPgwCi6" target="_blank" rel="noopener noreferrer"
+                    class="btn-google-maps">
                     <svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align: middle; margin-right: 6px;">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                        <path fill="#4285F4"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                        <path fill="#34A853"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                        <path fill="#FBBC05"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                        <path fill="#EA4335"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                     </svg>
                     Ver en Google Maps
                 </a>
@@ -1167,15 +1155,21 @@
                             <img src="images/pic-1.png" alt="Claudia Q." class="google-user-avatar">
                             <div>
                                 <h4 class="google-user-name">Claudia Quijilloborda</h4>
-                                <span class="google-user-badge"><i class="fas fa-map-pin"></i> Local Guide · 48 opiniones</span>
+                                <span class="google-user-badge"><i class="fas fa-map-pin"></i> Local Guide · 48
+                                    opiniones</span>
                             </div>
                         </div>
                         <span class="google-source-icon" title="Reseña verificada en Google Maps">
-                            <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle; margin-right: 5px;">
-                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                            <svg viewBox="0 0 24 24" width="16" height="16"
+                                style="vertical-align: middle; margin-right: 5px;">
+                                <path fill="#4285F4"
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                <path fill="#34A853"
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                <path fill="#FBBC05"
+                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                                <path fill="#EA4335"
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                             </svg>
                             Google Maps
                         </span>
@@ -1190,15 +1184,18 @@
                         </div>
                         <span class="google-review-date">Hace 2 semanas</span>
                     </div>
-                    <p class="google-review-text">"¡La pizza al horno a leña es exquisita! La masa tiene ese piso crocante inigualable y la salsa con la muzzarella abundante le dan un sabor tradicional buenísimo. Muy recomendable para pedir en familia."</p>
-                    
+                    <p class="google-review-text">"¡La pizza al horno a leña es exquisita! La masa tiene ese piso
+                        crocante inigualable y la salsa con la muzzarella abundante le dan un sabor tradicional
+                        buenísimo. Muy recomendable para pedir en familia."</p>
+
                     <!-- Owner Response -->
                     <div class="google-owner-reply">
                         <div class="reply-header">
                             <strong>Respuesta del propietario</strong>
                             <small>Hace 2 semanas</small>
                         </div>
-                        <p>¡Muchas gracias Claudia! Nos alegra mucho saber que disfrutaron en familia de nuestras pizzas al horno a leña. ¡A las órdenes siempre en ¡La Belgrano!!</p>
+                        <p>¡Muchas gracias Claudia! Nos alegra mucho saber que disfrutaron en familia de nuestras pizzas
+                            al horno a leña. ¡A las órdenes siempre en ¡La Belgrano!!</p>
                     </div>
 
                     <div class="google-card-footer">
@@ -1213,15 +1210,21 @@
                             <img src="images/pic-2.png" alt="Emiliano P." class="google-user-avatar">
                             <div>
                                 <h4 class="google-user-name">Emiliano Pereira</h4>
-                                <span class="google-user-badge"><i class="fas fa-map-pin"></i> Local Guide · 62 opiniones</span>
+                                <span class="google-user-badge"><i class="fas fa-map-pin"></i> Local Guide · 62
+                                    opiniones</span>
                             </div>
                         </div>
                         <span class="google-source-icon" title="Reseña verificada en Google Maps">
-                            <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle; margin-right: 5px;">
-                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                            <svg viewBox="0 0 24 24" width="16" height="16"
+                                style="vertical-align: middle; margin-right: 5px;">
+                                <path fill="#4285F4"
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                <path fill="#34A853"
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                <path fill="#FBBC05"
+                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                                <path fill="#EA4335"
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                             </svg>
                             Google Maps
                         </span>
@@ -1236,8 +1239,10 @@
                         </div>
                         <span class="google-review-date">Hace 1 mes</span>
                     </div>
-                    <p class="google-review-text">"Excelente pizzería de barrio. Los sándwiches calientes son súper abundantes y con muy buen queso derretido, y la fainá de orilla siempre sale perfecta y calentita. La atención en el local de Belgrano es muy rápida y amable."</p>
-                    
+                    <p class="google-review-text">"Excelente pizzería de barrio. Los sándwiches calientes son súper
+                        abundantes y con muy buen queso derretido, y la fainá de orilla siempre sale perfecta y
+                        calentita. La atención en el local de Belgrano es muy rápida y amable."</p>
+
                     <div class="google-card-footer">
                         <span class="google-helpful"><i class="far fa-thumbs-up"></i> Útil (18)</span>
                     </div>
@@ -1250,15 +1255,21 @@
                             <img src="images/pic-3.png" alt="Noemí H." class="google-user-avatar">
                             <div>
                                 <h4 class="google-user-name">Noemí Herrera</h4>
-                                <span class="google-user-badge"><i class="fas fa-map-pin"></i> Local Guide · 31 opiniones</span>
+                                <span class="google-user-badge"><i class="fas fa-map-pin"></i> Local Guide · 31
+                                    opiniones</span>
                             </div>
                         </div>
                         <span class="google-source-icon" title="Reseña verificada en Google Maps">
-                            <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle; margin-right: 5px;">
-                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                            <svg viewBox="0 0 24 24" width="16" height="16"
+                                style="vertical-align: middle; margin-right: 5px;">
+                                <path fill="#4285F4"
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                <path fill="#34A853"
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                <path fill="#FBBC05"
+                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                                <path fill="#EA4335"
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                             </svg>
                             Google Maps
                         </span>
@@ -1273,15 +1284,18 @@
                         </div>
                         <span class="google-review-date">Hace 3 semanas</span>
                     </div>
-                    <p class="google-review-text">"Pedimos delivery por teléfono y llegó impecable en hora, la pizza bien caliente como recién sacada del horno. Riquísima la fugazzeta y la fainá. Hacía tiempo no comía una pizza tan rica en la zona de La Blanqueada. ¡Seguiremos pidiendo seguro!"</p>
-                    
+                    <p class="google-review-text">"Pedimos delivery por teléfono y llegó impecable en hora, la pizza
+                        bien caliente como recién sacada del horno. Riquísima la fugazzeta y la fainá. Hacía tiempo no
+                        comía una pizza tan rica en la zona de La Blanqueada. ¡Seguiremos pidiendo seguro!"</p>
+
                     <!-- Owner Response -->
                     <div class="google-owner-reply">
                         <div class="reply-header">
                             <strong>Respuesta del propietario</strong>
                             <small>Hace 3 semanas</small>
                         </div>
-                        <p>¡Muchas gracias Noemí! Un placer enorme llevarte el auténtico sabor del horno a leña hasta tu casa. ¡Que lo disfrutes!</p>
+                        <p>¡Muchas gracias Noemí! Un placer enorme llevarte el auténtico sabor del horno a leña hasta tu
+                            casa. ¡Que lo disfrutes!</p>
                     </div>
 
                     <div class="google-card-footer">
@@ -1296,15 +1310,21 @@
                             <img src="images/pic-4.png" alt="Gonzalo T." class="google-user-avatar">
                             <div>
                                 <h4 class="google-user-name">Gonzalo Techera</h4>
-                                <span class="google-user-badge"><i class="fas fa-map-pin"></i> Local Guide · 84 opiniones</span>
+                                <span class="google-user-badge"><i class="fas fa-map-pin"></i> Local Guide · 84
+                                    opiniones</span>
                             </div>
                         </div>
                         <span class="google-source-icon" title="Reseña verificada en Google Maps">
-                            <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle; margin-right: 5px;">
-                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                            <svg viewBox="0 0 24 24" width="16" height="16"
+                                style="vertical-align: middle; margin-right: 5px;">
+                                <path fill="#4285F4"
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                <path fill="#34A853"
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                <path fill="#FBBC05"
+                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                                <path fill="#EA4335"
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                             </svg>
                             Google Maps
                         </span>
@@ -1319,7 +1339,9 @@
                         </div>
                         <span class="google-review-date">Hace 1 mes</span>
                     </div>
-                    <p class="google-review-text">"Un clásico de La Blanqueada y Parque Batlle. Precios muy acordes para la calidad que tienen, porciones generosas y el sabor inconfundible de la pizza al molde a la leña. Si andás por Belgrano 2881 es parada obligatoria para llevarte unas porciones."</p>
+                    <p class="google-review-text">"Un clásico de La Blanqueada y Parque Batlle. Precios muy acordes para
+                        la calidad que tienen, porciones generosas y el sabor inconfundible de la pizza al molde a la
+                        leña. Si andás por Belgrano 2881 es parada obligatoria para llevarte unas porciones."</p>
 
                     <div class="google-card-footer">
                         <span class="google-helpful"><i class="far fa-thumbs-up"></i> Útil (35)</span>
@@ -1336,7 +1358,8 @@
         <div class="box-container">
             <div class="box">
                 <h3><i class="fas fa-pizza-slice"></i> ¡La Belgrano!</h3>
-                <p>Pizzas al auténtico horno de leña, sándwiches calientes, fainá dorada y lemeyun tradicional en Montevideo. Pasión artesanal en cada porción.</p>
+                <p>Pizzas al auténtico horno de leña, sándwiches calientes, fainá dorada y lemeyun tradicional en
+                    Montevideo. Pasión artesanal en cada porción.</p>
                 <div class="share">
                     <a href="#" class="fab fa-instagram" title="Instagram"></a>
                     <a href="#" class="fab fa-facebook-f" title="Facebook"></a>
@@ -1347,10 +1370,13 @@
             <div class="box">
                 <h3>Contacto & Local</h3>
                 <a href="tel:24813859" class="links"><i class="fas fa-phone-alt"></i> Tel: 2481 38 59</a>
-                <a href="https://wa.me/59892884951" target="_blank" class="links"><i class="fab fa-whatsapp"></i> WhatsApp: 092 884 951</a>
-                <a href="#Cobertura" class="links"><i class="fas fa-map-marker-alt"></i> Belgrano 2881, 11600 Montevideo</a>
+                <a href="https://wa.me/59892884951" target="_blank" class="links"><i class="fab fa-whatsapp"></i>
+                    WhatsApp: 092 884 951</a>
+                <a href="#Cobertura" class="links"><i class="fas fa-map-marker-alt"></i> Belgrano 2881, 11600
+                    Montevideo</a>
                 <a href="#" class="links"><i class="fas fa-clock"></i> Mar a Dom: 19:30 a 00:00 hs</a>
-                <a href="mailto:pedidos@labelgrano.com.uy" class="links"><i class="fas fa-envelope"></i> pedidos@labelgrano.com.uy</a>
+                <a href="mailto:pedidos@labelgrano.com.uy" class="links"><i class="fas fa-envelope"></i>
+                    pedidos@labelgrano.com.uy</a>
             </div>
 
             <div class="box">
@@ -1364,8 +1390,10 @@
 
             <div class="box">
                 <h3>Zona de Cobertura</h3>
-                <p>Delivery rápido en Parque Batlle, Pocitos, Buceo, Cordón, La Blanqueada, Tres Cruces y alrededores. Medios de pago aceptados:</p>
-                <img src="images/payment.png" class="payment-img" alt="Medios de Pago: Efectivo, Débito, Crédito, Prex / Transferencia">
+                <p>Delivery rápido en Parque Batlle, Pocitos, Buceo, Cordón, La Blanqueada, Tres Cruces y alrededores.
+                    Medios de pago aceptados:</p>
+                <img src="images/payment.png" class="payment-img"
+                    alt="Medios de Pago: Efectivo, Débito, Crédito, Prex / Transferencia">
             </div>
         </div>
 
@@ -1389,5 +1417,9 @@
 
     <!-- Admin Panel Controller -->
     <script src="js/admin-panel.js"></script>
+
+    <!-- Floating Toast Notification -->
+    <div class="toast-notice" id="toast-notice"></div>
 </body>
+
 </html>
