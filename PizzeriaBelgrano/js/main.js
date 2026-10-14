@@ -679,28 +679,16 @@ document.addEventListener('DOMContentLoaded', () => {
         function renderDistanceResult(dist) {
             if (dist <= 2.2) {
                 addressStatusMsg.className = 'delivery-status-msg success';
-                addressStatusMsg.innerHTML = `
-                    <div class="status-badge-title"><i class="fas fa-check-circle"></i> ¡Excelente! Estás a <strong>${dist.toFixed(1)} km</strong> del local.</div>
-                    <div class="status-badge-desc">Tu dirección pertenece a <strong>Zona 1 (Parque Batlle / Blanqueada / Tres Cruces)</strong>: <strong>Envío SIN CARGO</strong> en 20 a 30 minutos.</div>
-                `;
+                addressStatusMsg.innerHTML = '<i class="fas fa-check-circle"></i> <strong>¡Llegamos a tu casa! Zona 1:</strong> Envío <strong>SIN CARGO</strong> (20 a 30 min).';
             } else if (dist <= 5.0) {
                 addressStatusMsg.className = 'delivery-status-msg express';
-                addressStatusMsg.innerHTML = `
-                    <div class="status-badge-title"><i class="fas fa-bolt"></i> ¡Llegamos a tu casa! Estás a <strong>${dist.toFixed(1)} km</strong> del local.</div>
-                    <div class="status-badge-desc">Tu dirección pertenece a <strong>Zona 2 (Pocitos / Buceo / Cordón / Parque Rodó)</strong>: Envío Express <strong>$60 UYU</strong> en 30 a 40 minutos.</div>
-                `;
+                addressStatusMsg.innerHTML = '<i class="fas fa-bolt"></i> <strong>¡Llegamos a tu casa! Zona 2:</strong> Envío <strong>$60</strong> (30 a 40 min).';
             } else if (dist <= 7.0) {
                 addressStatusMsg.className = 'delivery-status-msg express';
-                addressStatusMsg.innerHTML = `
-                    <div class="status-badge-title"><i class="fas fa-motorcycle"></i> ¡Llegamos con delivery! Estás a <strong>${dist.toFixed(1)} km</strong> del local.</div>
-                    <div class="status-badge-desc">Tu dirección está en <strong>Zona Extendida</strong>: Costo de envío <strong>$90 UYU</strong> en 40 a 50 minutos.</div>
-                `;
+                addressStatusMsg.innerHTML = '<i class="fas fa-motorcycle"></i> <strong>¡Llegamos a tu casa!</strong> Envío <strong>$90</strong> (40 a 50 min).';
             } else {
                 addressStatusMsg.className = 'delivery-status-msg error';
-                addressStatusMsg.innerHTML = `
-                    <div class="status-badge-title"><i class="fas fa-times-circle"></i> Dirección fuera de rango de delivery (${dist.toFixed(1)} km)</div>
-                    <div class="status-badge-desc">Supera nuestro radio máximo de entrega en moto (hasta 7 km del local). ¡Podés pedir para <strong>Take Away / Retiro en el local</strong> (Belgrano 2881) con <strong>15% OFF en efectivo</strong>!</div>
-                `;
+                addressStatusMsg.innerHTML = '<i class="fas fa-times-circle"></i> <strong>No llegamos con delivery hasta ahí.</strong> Podés retirar en el local (Belgrano 2881) con <strong>15% OFF en efectivo</strong>.';
             }
         }
 
@@ -713,13 +701,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (isZona1) {
                 addressStatusMsg.className = 'delivery-status-msg success';
-                addressStatusMsg.innerHTML = '<div class="status-badge-title"><i class="fas fa-check-circle"></i> ¡Excelente! Estás en Zona 1</div><div class="status-badge-desc">Envío <strong>SIN CARGO</strong> en 20 a 30 minutos.</div>';
+                addressStatusMsg.innerHTML = '<i class="fas fa-check-circle"></i> <strong>¡Llegamos a tu casa! Zona 1:</strong> Envío <strong>SIN CARGO</strong> (20 a 30 min).';
             } else if (isZona2) {
                 addressStatusMsg.className = 'delivery-status-msg express';
-                addressStatusMsg.innerHTML = '<div class="status-badge-title"><i class="fas fa-bolt"></i> ¡Llegamos a tu zona! Zona 2</div><div class="status-badge-desc">Envío Express <strong>$60 UYU</strong> en 30 a 40 minutos.</div>';
+                addressStatusMsg.innerHTML = '<i class="fas fa-bolt"></i> <strong>¡Llegamos a tu casa! Zona 2:</strong> Envío <strong>$60</strong> (30 a 40 min).';
             } else {
                 addressStatusMsg.className = 'delivery-status-msg warning';
-                addressStatusMsg.innerHTML = '<div class="status-badge-title"><i class="fas fa-question-circle"></i> Confirmación directa</div><div class="status-badge-desc">No pudimos verificar la distancia automáticamente. Hacé tu pedido por WhatsApp y te confirmamos la entrega al instante.</div>';
+                addressStatusMsg.innerHTML = '<i class="fas fa-question-circle"></i> Hacé tu pedido por WhatsApp y te confirmamos la entrega.';
             }
         }
 
@@ -729,7 +717,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!val) {
                 addressStatusMsg.className = 'delivery-status-msg warning';
-                addressStatusMsg.innerHTML = '<div class="status-badge-title"><i class="fas fa-exclamation-triangle"></i> Ingresá tu dirección</div><div class="status-badge-desc">Por favor ingresá tu calle y número (ej: <strong>Belgrano 2881</strong>).</div>';
+                addressStatusMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Por favor ingresá calle y número (ej: <strong>Belgrano 2881</strong>).';
                 addressInput.focus();
                 return;
             }
@@ -738,10 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const foreignPlaces = ['brasil', 'brazil', 'argentina', 'chile', 'paraguay', 'madrid', 'españa', 'espana', 'miami', 'eeuu', 'mexico', 'colombia', 'peru', 'venezuela', 'europa', 'bolivia', 'italia', 'francia', 'buenos aires', 'cordoba', 'rosario', 'rio de janeiro', 'sao paulo'];
             if (foreignPlaces.includes(lowerVal)) {
                 addressStatusMsg.className = 'delivery-status-msg error';
-                addressStatusMsg.innerHTML = `
-                    <div class="status-badge-title"><i class="fas fa-times-circle"></i> Ubicación fuera de cobertura</div>
-                    <div class="status-badge-desc">Ingresaste "<em>${val}</em>". Si te referías a una calle de Montevideo (ej: Av. Brasil), por favor indicá <strong>calle y número</strong> (ej: <strong>Av. Brasil 2600</strong>).</div>
-                `;
+                addressStatusMsg.innerHTML = '<i class="fas fa-times-circle"></i> No llegamos hasta ahí. Si estás en Montevideo, por favor indicá calle y número (ej: <strong>Av. Brasil 2600</strong>).';
                 return;
             }
 
@@ -751,10 +736,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!hasDigits && !hasIntersection) {
                 addressStatusMsg.className = 'delivery-status-msg warning';
-                addressStatusMsg.innerHTML = `
-                    <div class="status-badge-title"><i class="fas fa-map-pin"></i> Falta el número de puerta</div>
-                    <div class="status-badge-desc">Para calcular si llegamos y medir los kilómetros exactos, ingresá calle y número (ej: <strong>Belgrano 2881</strong> o <strong>Av. Brasil 2600</strong>).</div>
-                `;
+                addressStatusMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Por favor indicá calle y número (ej: <strong>Belgrano 2881</strong> o <strong>Av. Brasil 2600</strong>).';
                 return;
             }
 
@@ -763,7 +745,7 @@ document.addEventListener('DOMContentLoaded', () => {
             addressCheckBtn.disabled = true;
             addressCheckBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
             addressStatusMsg.className = 'delivery-status-msg loading';
-            addressStatusMsg.innerHTML = '<div class="status-badge-desc"><i class="fas fa-compass fa-spin"></i> Calculando distancia desde Belgrano 2881...</div>';
+            addressStatusMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando dirección...';
 
             try {
                 const query = lowerVal.includes('montevideo') ? val : `${val}, Montevideo, Uruguay`;
