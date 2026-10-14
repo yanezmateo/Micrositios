@@ -688,7 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 addressStatusMsg.innerHTML = '<i class="fas fa-motorcycle"></i> <strong>¡Llegamos a tu casa!</strong> Envío <strong>$90</strong> (40 a 50 min).';
             } else {
                 addressStatusMsg.className = 'delivery-status-msg error';
-                addressStatusMsg.innerHTML = '<i class="fas fa-times-circle"></i> <strong>No llegamos con delivery hasta ahí.</strong> Podés retirar en el local (Belgrano 2881) con <strong>15% OFF en efectivo</strong>.';
+                addressStatusMsg.innerHTML = '<i class="fas fa-times-circle"></i> <strong>Zona fuera de cobertura.</strong> Podés pedir con modalidad Take Away (retiro en el local con 15% OFF).';
             }
         }
 
@@ -726,7 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const foreignPlaces = ['brasil', 'brazil', 'argentina', 'chile', 'paraguay', 'madrid', 'españa', 'espana', 'miami', 'eeuu', 'mexico', 'colombia', 'peru', 'venezuela', 'europa', 'bolivia', 'italia', 'francia', 'buenos aires', 'cordoba', 'rosario', 'rio de janeiro', 'sao paulo'];
             if (foreignPlaces.includes(lowerVal)) {
                 addressStatusMsg.className = 'delivery-status-msg error';
-                addressStatusMsg.innerHTML = '<i class="fas fa-times-circle"></i> No llegamos hasta ahí. Si estás en Montevideo, por favor indicá calle y número (ej: <strong>Av. Brasil 2600</strong>).';
+                addressStatusMsg.innerHTML = '<i class="fas fa-times-circle"></i> <strong>Zona fuera de cobertura.</strong> Podés pedir con modalidad Take Away (retiro en el local con 15% OFF).';
                 return;
             }
 
