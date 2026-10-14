@@ -305,30 +305,33 @@
         constructor() {
             this.products = [];
             this.config = {
-                gasUrl: '',
-                sheetId: '',
+                supabaseUrl: '',
+                supabaseKey: '',
+                storageBucket: 'fotos-productos',
                 lastSync: null,
                 lastSyncStatus: 'local' // 'synced', 'local', 'syncing', 'error'
             };
+            this.client = null;
             this.isInitialized = false;
         }
 
         /**
          * Inicializa la base de datos: lee caché local o defaults,
-         * y lanza la sincronización con Google Sheets si hay URL configurada.
+         * inicializa el cliente de Supabase y sincroniza en segundo plano.
          */
         async init() {
             this.loadConfig();
             this.loadFromStorage();
+            this.initSupabaseClient();
             this.isInitialized = true;
 
             // Disparar evento para que la UI se renderice inmediatamente con datos locales
             this.notifyListeners('productsReady');
 
-            // Si hay URL de Google Sheets configurada, sincronizar en segundo plano
-            if (this.config.gasUrl) {
-                this.fetchFromSheets().catch(err => {
-                    console.warn('[SheetsDB] Sincronización inicial falló:', err);
+            // Si hay cliente de Supabase, sincronizar catálogo en segundo plano
+            if (this.client) {
+                this.fetchFromSupabase().catch(err => {
+                    console.warn('[SupabaseDB] Sincronización inicial falló:', err);
                 });
             }
 
@@ -337,33 +340,56 @@
 
         loadConfig() {
             try {
-                // 1. Cargar desde config global (definida en js/config.js para producción en Git)
-                if (window.PIZZERIA_CONFIG && window.PIZZERIA_CONFIG.gasUrl) {
-                    this.config.gasUrl = window.PIZZERIA_CONFIG.gasUrl.trim();
+                // 1. Cargar desde config global (definida en js/config.js para producción en Vercel)
+                if (window.PIZZERIA_CONFIG) {
+                    if (window.PIZZERIA_CONFIG.supabaseUrl) {
+                        this.config.supabaseUrl = window.PIZZERIA_CONFIG.supabaseUrl.trim();
+                    }
+                    if (window.PIZZERIA_CONFIG.supabaseKey) {
+                        this.config.supabaseKey = window.PIZZERIA_CONFIG.supabaseKey.trim();
+                    }
+                    if (window.PIZZERIA_CONFIG.storageBucket) {
+                        this.config.storageBucket = window.PIZZERIA_CONFIG.storageBucket.trim();
+                    }
                 }
 
-                // 2. Si el admin guardó una URL en este navegador, tiene prioridad
+                // 2. Si el admin guardó una URL/Key en este navegador, tiene prioridad
                 const saved = localStorage.getItem(CONFIG_KEY);
                 if (saved) {
                     const parsed = JSON.parse(saved);
-                    if (parsed.gasUrl) {
-                        this.config.gasUrl = parsed.gasUrl.trim();
-                    }
                     this.config = Object.assign(this.config, parsed);
                 }
             } catch (e) {
-                console.error('[SheetsDB] Error cargando config:', e);
+                console.error('[SupabaseDB] Error cargando config:', e);
             }
         }
 
-        saveConfig(gasUrl, sheetId = '') {
-            this.config.gasUrl = (gasUrl || '').trim();
-            this.config.sheetId = (sheetId || '').trim();
+        initSupabaseClient() {
+            try {
+                if (window.supabase && typeof window.supabase.createClient === 'function') {
+                    if (this.config.supabaseUrl && this.config.supabaseKey) {
+                        this.client = window.supabase.createClient(this.config.supabaseUrl, this.config.supabaseKey);
+                        this.config.lastSyncStatus = 'synced';
+                        return true;
+                    }
+                }
+            } catch (e) {
+                console.warn('[SupabaseDB] Error inicializando cliente de Supabase:', e);
+            }
+            this.client = null;
+            return false;
+        }
+
+        saveConfig(supabaseUrl, supabaseKey, storageBucket = 'fotos-productos') {
+            this.config.supabaseUrl = (supabaseUrl || '').trim();
+            this.config.supabaseKey = (supabaseKey || '').trim();
+            this.config.storageBucket = (storageBucket || 'fotos-productos').trim();
             try {
                 localStorage.setItem(CONFIG_KEY, JSON.stringify(this.config));
+                this.initSupabaseClient();
                 this.notifyListeners('configChanged');
             } catch (e) {
-                console.error('[SheetsDB] Error guardando config:', e);
+                console.error('[SupabaseDB] Error guardando config:', e);
             }
         }
 
@@ -378,7 +404,7 @@
                     }
                 }
             } catch (e) {
-                console.warn('[SheetsDB] Error leyendo storage, usando defaults:', e);
+                console.warn('[SupabaseDB] Error leyendo storage, usando defaults:', e);
             }
             this.products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
             this.saveToStorage();
@@ -388,7 +414,7 @@
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(this.products));
             } catch (e) {
-                console.error('[SheetsDB] Error escribiendo storage:', e);
+                console.error('[SupabaseDB] Error escribiendo storage:', e);
             }
         }
 
@@ -405,6 +431,59 @@
         }
 
         /**
+         * Sube una imagen en base64 directamente al bucket de Supabase Storage
+         * y retorna la URL pública permanente en CDN.
+         */
+        async uploadImageToSupabase(base64Data, filename) {
+            if (!this.client) return null;
+            try {
+                let base64String = base64Data;
+                let contentType = 'image/jpeg';
+
+                if (base64Data.indexOf('data:') === 0) {
+                    const parts = base64Data.split(',');
+                    const meta = parts[0];
+                    base64String = parts[1];
+                    const match = meta.match(/data:([^;]+)/);
+                    if (match) contentType = match[1];
+                }
+
+                const byteCharacters = atob(base64String);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: contentType });
+
+                const extension = contentType.includes('png') ? 'png' : 'jpg';
+                const cleanName = (filename || `foto_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`).replace(/[^a-zA-Z0-9_-]/g, '_') + '.' + extension;
+                const bucketName = this.config.storageBucket || 'fotos-productos';
+
+                const { data, error } = await this.client.storage
+                    .from(bucketName)
+                    .upload(cleanName, blob, {
+                        contentType: contentType,
+                        upsert: true
+                    });
+
+                if (error) {
+                    console.error('[SupabaseDB] Error subiendo imagen a Storage:', error);
+                    return null;
+                }
+
+                const { data: publicUrlData } = this.client.storage
+                    .from(bucketName)
+                    .getPublicUrl(cleanName);
+
+                return publicUrlData ? publicUrlData.publicUrl : null;
+            } catch (err) {
+                console.error('[SupabaseDB] Error procesando subida de imagen:', err);
+                return null;
+            }
+        }
+
+        /**
          * Actualizar un producto existente
          */
         async updateProduct(id, changes) {
@@ -413,10 +492,14 @@
                 throw new Error(`Producto con ID ${id} no encontrado`);
             }
 
-            // Aplicar cambios
-            if (changes.imageBase64) {
-                changes.image = changes.imageBase64;
+            // Si vino foto nueva en base64, subirla a Supabase Storage
+            if (changes.imageBase64 && this.client) {
+                const uploadedUrl = await this.uploadImageToSupabase(changes.imageBase64, id);
+                if (uploadedUrl) {
+                    changes.image = uploadedUrl;
+                }
             }
+
             this.products[index] = Object.assign({}, this.products[index], changes);
             if (changes.price) this.products[index].price = Number(changes.price);
             if (changes.old_price) this.products[index].old_price = Number(changes.old_price);
@@ -424,26 +507,29 @@
             this.saveToStorage();
             this.notifyListeners('productsUpdated', { action: 'update', product: this.products[index] });
 
-            // Enviar a Google Sheets si hay URL
-            if (this.config.gasUrl) {
+            // Enviar a Supabase PostgreSQL
+            if (this.client) {
                 try {
-                    const res = await this.sendPostRequest({
-                        action: 'update',
-                        id: id,
-                        product: Object.assign({}, this.products[index], {
-                            imageBase64: changes.imageBase64 || null
-                        })
-                    });
-                    if (res && res.imageUrl) {
-                        this.products[index].image = res.imageUrl;
-                        this.saveToStorage();
-                        this.notifyListeners('productsUpdated', { action: 'update', product: this.products[index] });
-                    }
+                    const row = {
+                        nombre: this.products[index].name,
+                        categoria: this.products[index].category,
+                        precio: this.products[index].price,
+                        precio_anterior: this.products[index].old_price || null,
+                        descripcion: this.products[index].desc,
+                        ingredientes: this.products[index].ingredients,
+                        variantes: this.products[index].variants,
+                        imagen: this.products[index].image,
+                        etiqueta: this.products[index].badge,
+                        activo: this.products[index].active !== false
+                    };
+
+                    const { error } = await this.client.from('productos').update(row).eq('id', id);
+                    if (error) throw error;
+
                     this.config.lastSync = new Date().toISOString();
                     this.config.lastSyncStatus = 'synced';
-                    this.saveConfig(this.config.gasUrl, this.config.sheetId);
                 } catch (err) {
-                    console.error('[SheetsDB] Error al sincronizar actualización con Google Sheets:', err);
+                    console.error('[SupabaseDB] Error actualizando producto en Supabase:', err);
                     this.config.lastSyncStatus = 'error';
                 }
             }
@@ -455,7 +541,6 @@
          * Agregar un nuevo producto
          */
         async addProduct(productData) {
-            // Generar ID único
             const slug = (productData.name || 'producto')
                 .toLowerCase()
                 .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -463,13 +548,23 @@
                 .replace(/(^-|-$)/g, '');
             const newId = productData.id || `${slug}-${Date.now().toString().slice(-4)}`;
 
+            let imageUrl = productData.image || 'images/product-1.png';
+
+            // Si vino foto en base64, subirla a Supabase Storage
+            if (productData.imageBase64 && this.client) {
+                const uploadedUrl = await this.uploadImageToSupabase(productData.imageBase64, newId);
+                if (uploadedUrl) {
+                    imageUrl = uploadedUrl;
+                }
+            }
+
             const newProduct = {
                 id: newId,
                 name: productData.name || 'Nuevo Producto',
                 category: productData.category || 'pizzas',
                 price: Number(productData.price) || 0,
                 old_price: productData.old_price ? Number(productData.old_price) : null,
-                image: productData.imageBase64 || productData.image || 'images/product-1.png',
+                image: imageUrl,
                 badge: productData.badge || '',
                 ingredients: productData.ingredients || '',
                 variants: productData.variants || '',
@@ -481,25 +576,30 @@
             this.saveToStorage();
             this.notifyListeners('productsUpdated', { action: 'add', product: newProduct });
 
-            // Enviar a Google Sheets
-            if (this.config.gasUrl) {
+            // Enviar a Supabase PostgreSQL
+            if (this.client) {
                 try {
-                    const res = await this.sendPostRequest({
-                        action: 'add',
-                        product: Object.assign({}, newProduct, {
-                            imageBase64: productData.imageBase64 || null
-                        })
-                    });
-                    if (res && res.imageUrl) {
-                        newProduct.image = res.imageUrl;
-                        this.saveToStorage();
-                        this.notifyListeners('productsUpdated', { action: 'update', product: newProduct });
-                    }
+                    const row = {
+                        id: newId,
+                        nombre: newProduct.name,
+                        categoria: newProduct.category,
+                        precio: newProduct.price,
+                        precio_anterior: newProduct.old_price,
+                        descripcion: newProduct.desc,
+                        ingredientes: newProduct.ingredients,
+                        variantes: newProduct.variants,
+                        imagen: newProduct.image,
+                        etiqueta: newProduct.badge,
+                        activo: true
+                    };
+
+                    const { error } = await this.client.from('productos').insert([row]);
+                    if (error) throw error;
+
                     this.config.lastSync = new Date().toISOString();
                     this.config.lastSyncStatus = 'synced';
-                    this.saveConfig(this.config.gasUrl, this.config.sheetId);
                 } catch (err) {
-                    console.error('[SheetsDB] Error agregando producto a Google Sheets:', err);
+                    console.error('[SupabaseDB] Error insertando producto en Supabase:', err);
                     this.config.lastSyncStatus = 'error';
                 }
             }
@@ -520,18 +620,16 @@
             this.saveToStorage();
             this.notifyListeners('productsUpdated', { action: 'delete', id: id });
 
-            // Enviar a Google Sheets
-            if (this.config.gasUrl) {
+            // Eliminar de Supabase PostgreSQL
+            if (this.client) {
                 try {
-                    await this.sendPostRequest({
-                        action: 'delete',
-                        id: id
-                    });
+                    const { error } = await this.client.from('productos').delete().eq('id', id);
+                    if (error) throw error;
+
                     this.config.lastSync = new Date().toISOString();
                     this.config.lastSyncStatus = 'synced';
-                    this.saveConfig(this.config.gasUrl, this.config.sheetId);
                 } catch (err) {
-                    console.error('[SheetsDB] Error eliminando producto en Google Sheets:', err);
+                    console.error('[SupabaseDB] Error eliminando producto en Supabase:', err);
                     this.config.lastSyncStatus = 'error';
                 }
             }
@@ -540,59 +638,49 @@
         }
 
         /**
-         * Exportar TODOS los productos locales a Google Sheets (SyncAll / Carga Inicial)
+         * Descargar catálogo completo desde Supabase PostgreSQL
          */
-        async exportAllToSheets() {
-            if (!this.config.gasUrl) {
-                throw new Error('Primero debes configurar la URL de Google Sheets en la configuración.');
-            }
-
-            const response = await this.sendPostRequest({
-                action: 'syncAll',
-                products: this.products
-            });
-
-            this.config.lastSync = new Date().toISOString();
-            this.config.lastSyncStatus = 'synced';
-            this.saveConfig(this.config.gasUrl, this.config.sheetId);
-            this.notifyListeners('syncCompleted', { count: this.products.length });
-            return response;
-        }
-
-        /**
-         * Descargar productos desde Google Sheets y actualizar el sitio
-         */
-        async fetchFromSheets() {
-            if (!this.config.gasUrl) return;
+        async fetchFromSupabase() {
+            if (!this.client) return null;
 
             this.config.lastSyncStatus = 'syncing';
             this.notifyListeners('syncStatusChanged', 'syncing');
 
             try {
-                const res = await fetch(this.config.gasUrl, {
-                    method: 'GET',
-                    cache: 'no-cache'
-                });
+                const { data, error } = await this.client
+                    .from('productos')
+                    .select('*')
+                    .order('created_at', { ascending: true });
 
-                if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
-                const data = await res.json();
+                if (error) throw error;
 
-                if (data && data.status === 'success' && Array.isArray(data.products) && data.products.length > 0) {
-                    this.products = data.products;
+                if (Array.isArray(data) && data.length > 0) {
+                    this.products = data.map(row => ({
+                        id: String(row.id),
+                        name: String(row.nombre || ''),
+                        category: String(row.categoria || 'pizzas'),
+                        price: Number(row.precio) || 0,
+                        old_price: row.precio_anterior ? Number(row.precio_anterior) : null,
+                        desc: String(row.descripcion || ''),
+                        ingredients: String(row.ingredientes || ''),
+                        variants: String(row.variantes || ''),
+                        image: String(row.imagen || 'images/product-1.png'),
+                        badge: String(row.etiqueta || ''),
+                        active: row.activo !== false
+                    }));
+
                     this.saveToStorage();
                     this.config.lastSync = new Date().toISOString();
                     this.config.lastSyncStatus = 'synced';
-                    this.saveConfig(this.config.gasUrl, this.config.sheetId);
                     this.notifyListeners('productsUpdated', { action: 'fetch', count: this.products.length });
                     this.notifyListeners('syncStatusChanged', 'synced');
-                    return data.products;
-                } else if (data && data.count === 0) {
-                    // Si la hoja está vacía, no borramos los locales; invitamos a exportar
-                    this.config.lastSyncStatus = 'local';
-                    this.notifyListeners('syncStatusChanged', 'empty_sheet');
+                    return this.products;
+                } else if (Array.isArray(data) && data.length === 0) {
+                    // Si la tabla está vacía en Supabase, exportamos el catálogo inicial para poblarla automáticamente
+                    await this.exportAllToSupabase();
                 }
             } catch (err) {
-                console.error('[SheetsDB] Error al obtener datos de Google Sheets:', err);
+                console.error('[SupabaseDB] Error al consultar Supabase:', err);
                 this.config.lastSyncStatus = 'error';
                 this.notifyListeners('syncStatusChanged', 'error');
                 throw err;
@@ -600,54 +688,64 @@
         }
 
         /**
-         * Probar la conexión con una URL de Google Apps Script
+         * Exportar todos los productos locales a Supabase (población inicial)
          */
-        async testConnection(testUrl) {
-            const url = (testUrl || this.config.gasUrl || '').trim();
-            if (!url) throw new Error('Por favor ingresá la URL del Web App de Google Apps Script.');
-
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'test' })
-            });
-
-            if (!res.ok) throw new Error(`Respuesta HTTP no válida: ${res.status}`);
-            const data = await res.json();
-            return data;
-        }
-
-        /**
-         * Helper para llamadas POST a Google Apps Script evitando bloqueos CORS
-         */
-        async sendPostRequest(payload, timeoutMs = 15000) {
-            const url = this.config.gasUrl;
-            if (!url) throw new Error('No hay URL de Google Apps Script configurada');
-
-            const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-            try {
-                // Usar 'text/plain' para evitar preflight OPTIONS bloqueado por CORS en Apps Script
-                const res = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload),
-                    signal: controller.signal
-                });
-
-                if (!res.ok) {
-                    throw new Error(`Error en la solicitud a Google Sheets: ${res.status}`);
-                }
-
-                return await res.json();
-            } finally {
-                clearTimeout(timer);
+        async exportAllToSupabase() {
+            if (!this.client) {
+                throw new Error('Primero debés configurar la conexión con Supabase.');
             }
+
+            const rows = this.products.map(p => ({
+                id: p.id,
+                nombre: p.name,
+                categoria: p.category,
+                precio: Number(p.price) || 0,
+                precio_anterior: p.old_price ? Number(p.old_price) : null,
+                descripcion: p.desc || '',
+                ingredientes: p.ingredients || '',
+                variantes: p.variants || '',
+                imagen: p.image || 'images/product-1.png',
+                etiqueta: p.badge || '',
+                activo: p.active !== false
+            }));
+
+            const { data, error } = await this.client
+                .from('productos')
+                .upsert(rows, { onConflict: 'id' });
+
+            if (error) throw error;
+
+            this.config.lastSync = new Date().toISOString();
+            this.config.lastSyncStatus = 'synced';
+            this.notifyListeners('syncCompleted', { count: rows.length });
+            return { count: rows.length };
         }
 
         /**
-         * Autenticación de Administrador (admin / 1111)
+         * Probar la conexión con Supabase
+         */
+        async testConnection() {
+            if (!this.client) {
+                this.initSupabaseClient();
+            }
+            if (!this.client) {
+                throw new Error('Faltan URL o Key de Supabase en la configuración.');
+            }
+
+            const { count, error } = await this.client
+                .from('productos')
+                .select('*', { count: 'exact', head: true });
+
+            if (error) throw error;
+
+            return {
+                status: 'success',
+                message: `¡Conexión exitosa con Supabase! (${count !== null ? count : 0} productos en la nube)`
+            };
+        }
+
+        /**
+         * Autenticación de Administrador (admin / 1111 o clave en tabla configuracion)
          */
         isAdmin() {
             return sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true';
@@ -659,38 +757,33 @@
 
             if (!u || !p) return { success: false, message: 'Ingresá usuario y contraseña.' };
 
-            const localPass = localStorage.getItem('pizzeria_custom_pass') || '1111';
             const validUser = u === 'admin' || u.includes('admin');
+            const localPass = localStorage.getItem('pizzeria_custom_pass') || '1111';
 
-            // 1. Acceso instantáneo con credenciales por defecto (admin / 1111) o clave local
+            // 1. Acceso instantáneo con clave local / por defecto
             if (validUser && (p === '1111' || p === localPass)) {
                 sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
                 this.notifyListeners('adminAuthChanged', { isAdmin: true });
-                // En segundo plano validar/notificar a Google Sheets
-                if (this.config.gasUrl) {
-                    this.sendPostRequest({ action: 'login', username: u, password: p }).catch(() => {});
-                }
                 return { success: true };
             }
 
-            // 2. Si se cambió la contraseña en Google Sheets (no es 1111), validar en la nube
-            if (this.config.gasUrl) {
+            // 2. Si no coincide, consultar tabla configuracion de Supabase
+            if (this.client && validUser) {
                 try {
-                    const res = await this.sendPostRequest({
-                        action: 'login',
-                        username: u,
-                        password: p
-                    });
-                    if (res && res.authenticated) {
+                    const { data, error } = await this.client
+                        .from('configuracion')
+                        .select('valor')
+                        .eq('clave', 'admin_password')
+                        .maybeSingle();
+
+                    if (!error && data && data.valor && p === String(data.valor).trim()) {
                         sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
                         localStorage.setItem('pizzeria_custom_pass', p);
                         this.notifyListeners('adminAuthChanged', { isAdmin: true });
                         return { success: true };
-                    } else {
-                        return { success: false, message: res.message || 'Usuario o contraseña incorrectos.' };
                     }
                 } catch (err) {
-                    console.warn('[SheetsDB] Error validando online con Google Sheets:', err);
+                    console.warn('[SupabaseDB] Error consultando credenciales:', err);
                 }
             }
 
@@ -702,37 +795,42 @@
                 throw new Error('La nueva contraseña debe tener al menos 3 caracteres.');
             }
 
-            if (this.config.gasUrl) {
-                const res = await this.sendPostRequest({
-                    action: 'changePassword',
-                    currentPassword: currentPass,
-                    newPassword: newPass
-                });
+            // Validar clave actual
+            const localPass = localStorage.getItem('pizzeria_custom_pass') || '1111';
+            let cloudPass = localPass;
 
-                if (res.status === 'error') {
-                    throw new Error(res.message || 'No se pudo cambiar la contraseña');
-                }
-            } else {
-                const localPass = localStorage.getItem('pizzeria_custom_pass') || '1111';
-                if (currentPass !== localPass) {
-                    throw new Error('La contraseña actual ingresada no coincide.');
+            if (this.client) {
+                try {
+                    const { data } = await this.client
+                        .from('configuracion')
+                        .select('valor')
+                        .eq('clave', 'admin_password')
+                        .maybeSingle();
+                    if (data && data.valor) {
+                        cloudPass = String(data.valor).trim();
+                    }
+                } catch (e) {}
+            }
+
+            if (currentPass !== localPass && currentPass !== cloudPass) {
+                throw new Error('La contraseña actual ingresada no coincide.');
+            }
+
+            // Guardar local
+            localStorage.setItem('pizzeria_custom_pass', newPass);
+
+            // Guardar en Supabase PostgreSQL
+            if (this.client) {
+                const { error } = await this.client
+                    .from('configuracion')
+                    .upsert({ clave: 'admin_password', valor: newPass, updated_at: new Date().toISOString() });
+                if (error) {
+                    console.error('[SupabaseDB] Error guardando contraseña en Supabase:', error);
                 }
             }
 
-            localStorage.setItem('pizzeria_custom_pass', newPass);
             this.notifyListeners('passwordChanged', { newPass });
             return true;
-        }
-
-        async organizeDrive() {
-            if (!this.config.gasUrl) {
-                throw new Error('Primero debés configurar la URL de tu Google Apps Script.');
-            }
-            const res = await this.sendPostRequest({ action: 'organizeDrive' });
-            if (!res || res.status === 'error') {
-                throw new Error((res && res.message) || 'Error al organizar carpetas en Google Drive');
-            }
-            return res;
         }
 
         logout() {
@@ -745,6 +843,7 @@
             window.dispatchEvent(evt);
         }
     }
+
 
     // Instancia global disponible en window.productsDb
     window.productsDb = new ProductsDatabase();

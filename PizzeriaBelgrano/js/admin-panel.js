@@ -101,17 +101,17 @@
             topbar.innerHTML = `
                 <div class="admin-topbar-left">
                     <span class="admin-brand-tag"><i class="fas fa-shield-alt"></i> Modo Dueño</span>
-                    <div class="admin-status-pill local" id="admin-status-pill" title="Clic para configurar Google Sheets">
+                    <div class="admin-status-pill local" id="admin-status-pill" title="Clic para ver estado de la base de datos">
                         <span class="admin-status-dot"></span>
-                        <span class="admin-status-text">Guardando Localmente</span>
+                        <span class="admin-status-text">Base de Datos: Supabase</span>
                     </div>
                 </div>
                 <div class="admin-topbar-right">
                     <button class="btn-admin-action btn-admin-add" id="btn-admin-add-product">
                         <i class="fas fa-plus-circle"></i> <span>Nuevo Producto</span>
                     </button>
-                    <button class="btn-admin-action btn-admin-sheets" id="btn-admin-sheets-cfg">
-                        <i class="fas fa-file-excel"></i> <span>Google Sheets</span>
+                    <button class="btn-admin-action btn-admin-db" id="btn-admin-db-cfg" title="Estado de la Base de Datos">
+                        <i class="fas fa-database"></i> <span>Base de Datos</span>
                     </button>
                     <button class="btn-admin-action btn-admin-pass" id="btn-admin-change-pass" title="Cambiar Contraseña">
                         <i class="fas fa-key"></i> <span>Clave</span>
@@ -232,7 +232,7 @@
                     <div class="delete-confirm-body">
                         <div class="delete-confirm-icon"><i class="fas fa-exclamation-triangle"></i></div>
                         <h4 class="delete-confirm-title">¿Eliminar este producto?</h4>
-                        <p class="delete-confirm-text" id="delete-confirm-msg">El producto se eliminará de la carta y de la hoja de Google Sheets.</p>
+                        <p class="delete-confirm-text" id="delete-confirm-msg">El producto se eliminará de la carta y de la base de datos de Supabase.</p>
                     </div>
                     <div class="admin-modal-footer" style="justify-content: center;">
                         <button type="button" class="btn-admin-cancel" id="btn-delete-cancel">Cancelar</button>
@@ -242,63 +242,50 @@
                     </div>
                 </div>
 
-                <!-- Google Sheets Settings & Sync Modal -->
-                <div class="admin-modal" id="admin-sheets-modal" role="dialog" aria-modal="true">
+                <!-- Supabase Cloud Database Modal -->
+                <div class="admin-modal" id="admin-db-modal" role="dialog" aria-modal="true" style="max-width: 580px;">
                     <div class="admin-modal-header">
-                        <h3 class="admin-modal-title"><i class="fas fa-file-excel" style="color: #22c55e;"></i> <span>Conexión con Google Sheets</span></h3>
-                        <button class="admin-modal-close" id="admin-sheets-close"><i class="fas fa-times"></i></button>
+                        <h3 class="admin-modal-title"><i class="fas fa-database" style="color: #38bdf8;"></i> <span>Base de Datos & Nube (Supabase)</span></h3>
+                        <button class="admin-modal-close" id="admin-db-close"><i class="fas fa-times"></i></button>
                     </div>
                     <div class="admin-modal-body">
-                        <div class="admin-field-group">
-                            <label class="admin-field-label" for="sheets-web-app-url">
-                                URL de tu Aplicación Web de Google Apps Script:
-                            </label>
-                            <div style="display: flex; gap: 0.8rem;">
-                                <input type="url" id="sheets-web-app-url" class="admin-input" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
-                                <button type="button" class="btn-admin-action" id="btn-test-sheets-conn" style="background: #2563eb; color: #fff; flex-shrink: 0;">
-                                    <i class="fas fa-plug"></i> Probar
-                                </button>
+                        <!-- Cloud Info Card -->
+                        <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 1.4rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                                <strong style="color: #ffffff; font-size: 1.35rem;"><i class="fas fa-server" style="color: #38bdf8;"></i> Estado del Sistema</strong>
+                                <span style="background: #065f46; color: #34d399; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 1.15rem; font-weight: 600;">
+                                    <i class="fas fa-check-circle"></i> Conectado a Supabase
+                                </span>
                             </div>
-                            <small style="color: #a1a1aa;">Pegá el enlace obtenido al "Implementar como Aplicación Web" en Google Sheets.</small>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; font-size: 1.2rem; color: #d4d4d8;">
+                                <div><strong>Base de Datos:</strong> PostgreSQL</div>
+                                <div><strong>Storage:</strong> fotos-productos (CDN)</div>
+                                <div><strong>Hosting:</strong> Vercel (Producción)</div>
+                                <div><strong>Dominio:</strong> pizzeriabelgrano.vercel.app</div>
+                            </div>
                         </div>
 
-                        <!-- 1-Click Sync Actions -->
-                        <div class="sheets-actions-grid">
-                            <button type="button" class="btn-sheets-action btn-sheets-export" id="btn-sheets-export-all">
-                                <i class="fas fa-cloud-upload-alt"></i> <span>Exportar Todo a Sheets</span>
+                        <!-- 1-Click Cloud Actions -->
+                        <div class="sheets-actions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                            <a href="https://supabase.com/dashboard/project/rsuubjaeglnfxiprvqim/editor" target="_blank" class="btn-sheets-action" style="grid-column: 1 / -1; background: #0284c7; color: #ffffff; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.8rem; padding: 1rem; border-radius: 8px; font-weight: 600; font-size: 1.3rem;">
+                                <i class="fas fa-external-link-alt"></i> <span>Abrir Editor Visual de Supabase (Estilo Excel)</span>
+                            </a>
+                            <button type="button" class="btn-sheets-action btn-sheets-import" id="btn-db-refresh-all" style="background: #27272a; border: 1px solid #3f3f46; color: #ffffff; padding: 0.9rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                <i class="fas fa-sync-alt"></i> <span>Refrescar Catálogo</span>
                             </button>
-                            <button type="button" class="btn-sheets-action btn-sheets-import" id="btn-sheets-import-all">
-                                <i class="fas fa-cloud-download-alt"></i> <span>Descargar desde Sheets</span>
-                            </button>
-                            <button type="button" class="btn-sheets-action btn-sheets-organize" id="btn-sheets-organize-drive" style="grid-column: 1 / -1; background: #0284c7; color: #ffffff; border: 1px solid #38bdf8;">
-                                <i class="fas fa-folder-plus"></i> <span>Organizar Drive: Micrositios / LaBelgrano</span>
+                            <button type="button" class="btn-sheets-action btn-sheets-export" id="btn-db-export-all" style="background: #27272a; border: 1px solid #3f3f46; color: #ffffff; padding: 0.9rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                <i class="fas fa-cloud-upload-alt"></i> <span>Exportar a Supabase</span>
                             </button>
                         </div>
 
-                        <!-- Step-by-step Setup Guide -->
-                        <div class="sheets-setup-card">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <strong style="color: #ffffff; font-size: 1.35rem;"><i class="fas fa-book-open"></i> Guía rápida de conexión (1 minuto):</strong>
-                            </div>
-                            <ol class="sheets-steps-list">
-                                <li>Abrí una hoja en blanco en <a href="https://sheets.new" target="_blank" style="color: #38bdf8; text-decoration: underline;">Google Sheets</a>.</li>
-                                <li>En el menú superior, andá a <strong>Extensiones &gt; Apps Script</strong>.</li>
-                                <li>Pegá el script que creamos en el proyecto (<code>google-sheets-backend.gs</code>).</li>
-                                <li>Hacé clic en <strong>Implementar &gt; Nueva implementación</strong>, elegí <strong>Aplicación web</strong>, poné acceso para <em>"Cualquier usuario"</em> y copiá la URL.</li>
-                                <li>Pegá la URL arriba y hacé clic en <strong>"Exportar Todo a Sheets"</strong> para cargar automáticamente todas las pizzas y productos en tu planilla.</li>
-                            </ol>
-                            <div class="sheets-copy-code-box">
-                                <span style="font-size: 1.2rem; color: #a1a1aa;"><i class="fas fa-code"></i> Código backend listo para copiar:</span>
-                                <button type="button" class="btn-copy-code" id="btn-copy-script-code">
-                                    <i class="fas fa-copy"></i> Copiar Código Apps Script
-                                </button>
-                            </div>
+                        <div style="font-size: 1.2rem; color: #a1a1aa; line-height: 1.5; background: #18181b; padding: 1rem 1.2rem; border-radius: 8px;">
+                            <i class="fas fa-lightbulb" style="color: #facc15;"></i> <strong>Almacenamiento Directo:</strong> Las fotos que sacás desde el celular o PC se suben automáticamente a tu almacenamiento en Supabase Storage con CDN ultra rápido.
                         </div>
                     </div>
                     <div class="admin-modal-footer">
-                        <button type="button" class="btn-admin-cancel" id="btn-sheets-modal-close">Cerrar</button>
-                        <button type="button" class="btn-admin-save" id="btn-sheets-save-url">
-                            <i class="fas fa-check"></i> <span>Guardar URL</span>
+                        <button type="button" class="btn-admin-cancel" id="btn-db-modal-close">Cerrar</button>
+                        <button type="button" class="btn-admin-save" id="btn-db-test-conn" style="background: #059669;">
+                            <i class="fas fa-plug"></i> <span>Probar Conexión</span>
                         </button>
                     </div>
                 </div>
@@ -458,10 +445,10 @@
                 });
             }
 
-            const btnSheetsCfg = document.getElementById('btn-admin-sheets-cfg');
+            const btnDbCfg = document.getElementById('btn-admin-db-cfg');
             const pillStatus = document.getElementById('admin-status-pill');
-            if (btnSheetsCfg) btnSheetsCfg.addEventListener('click', () => this.openSheetsModal());
-            if (pillStatus) pillStatus.addEventListener('click', () => this.openSheetsModal());
+            if (btnDbCfg) btnDbCfg.addEventListener('click', () => this.openDbModal());
+            if (pillStatus) pillStatus.addEventListener('click', () => this.openDbModal());
 
             // 5. Product Form Modal Controls
             const modalOverlay = document.getElementById('admin-modal-overlay');
@@ -745,7 +732,7 @@
 
                     try {
                         await this.db.changePassword(cur, n1);
-                        this.showToast('¡Contraseña actualizada con éxito en Google Sheets!');
+                        this.showToast('¡Contraseña actualizada con éxito en Supabase!');
                         this.closeAllModals();
                     } catch (err) {
                         alert('Error: ' + err.message);
@@ -798,21 +785,21 @@
             const cfg = this.db.config;
             pill.className = 'admin-status-pill';
 
-            if (!cfg.gasUrl) {
+            if (!cfg.supabaseUrl || !cfg.supabaseKey) {
                 pill.classList.add('local');
-                pill.querySelector('.admin-status-text').innerText = 'Modo Local (Configurar Sheets)';
-                pill.title = 'Los cambios se guardan en este navegador. Hacé clic para conectar con Google Sheets.';
+                pill.querySelector('.admin-status-text').innerText = 'Modo Local (Configurar Supabase)';
+                pill.title = 'Los cambios se guardan en este navegador. Hacé clic para conectar con Supabase.';
             } else if (cfg.lastSyncStatus === 'syncing') {
                 pill.classList.add('syncing');
-                pill.querySelector('.admin-status-text').innerText = 'Sincronizando con Sheets...';
+                pill.querySelector('.admin-status-text').innerText = 'Sincronizando con Supabase...';
             } else if (cfg.lastSyncStatus === 'error') {
                 pill.classList.add('error');
-                pill.querySelector('.admin-status-text').innerText = 'Error en Sheets (Verificar)';
-                pill.title = 'Hubo un error de conexión con Google Sheets. Clic para verificar la URL.';
+                pill.querySelector('.admin-status-text').innerText = 'Error en Supabase (Verificar)';
+                pill.title = 'Hubo un error de conexión con Supabase. Clic para verificar.';
             } else {
                 pill.classList.add('synced');
-                pill.querySelector('.admin-status-text').innerText = 'Google Sheets Conectado';
-                pill.title = 'Conectado en vivo con Google Sheets. Clic para administrar.';
+                pill.querySelector('.admin-status-text').innerText = 'Supabase Conectado';
+                pill.title = 'Conectado en vivo con PostgreSQL y Supabase Storage. Clic para administrar.';
             }
         }
 
@@ -894,8 +881,8 @@
             document.body.style.overflow = 'hidden';
         }
 
-        openSheetsModal() {
-            const modal = document.getElementById('admin-sheets-modal');
+        openDbModal() {
+            const modal = document.getElementById('admin-db-modal');
             const overlay = document.getElementById('admin-modal-overlay');
             const inputUrl = document.getElementById('sheets-web-app-url');
 
@@ -932,7 +919,7 @@
 
             btnSave.disabled = true;
             btnSave.innerHTML = this.currentUploadedBase64 
-                ? '<i class="fas fa-spinner fa-spin"></i> <span>Subiendo foto a Drive...</span>' 
+                ? '<i class="fas fa-spinner fa-spin"></i> <span>Subiendo foto a Supabase...</span>' 
                 : '<i class="fas fa-spinner fa-spin"></i> <span>Guardando...</span>';
 
             try {

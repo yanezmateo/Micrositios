@@ -180,14 +180,17 @@ body.admin-mode-active .header {
     transform: translateY(-1px);
 }
 
-.btn-admin-sheets {
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
+.btn-admin-sheets,
+.btn-admin-db {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
 }
 
-.btn-admin-sheets:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: #38bdf8;
+.btn-admin-sheets:hover,
+.btn-admin-db:hover {
+    background: rgba(56, 189, 248, 0.25);
+    color: #ffffff;
 }
 
 .btn-admin-pass {

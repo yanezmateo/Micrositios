@@ -1,16 +1,16 @@
 /**
  * ==========================================================================
- * PIZZERÍA BELGRANO - CONFIGURACIÓN DE CONEXIÓN ONLINE (GOOGLE SHEETS)
+ * PIZZERÍA BELGRANO - CONFIGURACIÓN DE CONEXIÓN ONLINE (SUPABASE & VERCEL)
  * ==========================================================================
  * 
- * Si vas a subir este proyecto a GitHub / Git (para GitHub Pages, Vercel, Netlify o hosting propio),
- * pegá aquí abajo la URL de tu aplicación web de Google Apps Script (la que termina en /exec).
- * 
- * De este modo, cualquier cliente que entre a la página desde su propio celular o computadora
- * se conectará en vivo y en directo con tu hoja de Google Sheets.
+ * Conexión nativa con la base de datos PostgreSQL y Storage de Supabase.
+ * - Lectura y escritura ultra rápida (<50ms).
+ * - Almacenamiento seguro de imágenes en CDN global.
+ * - Autenticación y gestión de catálogo en tiempo real.
  */
 
 window.PIZZERIA_CONFIG = {
-    // Pegá tu URL de Google Apps Script entre las comillas (ej: 'https://script.google.com/macros/s/.../exec')
-    gasUrl: 'https://script.google.com/macros/s/AKfycbzdXbCCgRzQ-cEKgUBK643oAsek0DH8DysRkJozDJrCDLzz6L3PLJfyolQJ_rcWvbddNw/exec'
+    supabaseUrl: 'https://rsuubjaeglnfxiprvqim.supabase.co',
+    supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdXViamFlZ2xuZnhpcHJ2cWltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5OTAwMjQsImV4cCI6MjEwNzU2NjAyNH0.MDszFgo4k9BkbhKzosDX6Tmgu4oSmsQo2HSLx9HKdZg',
+    storageBucket: 'fotos-productos'
 };
