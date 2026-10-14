@@ -655,35 +655,153 @@ document.addEventListener('DOMContentLoaded', () => {
         lastTouchTime = currentTime;
     }, { passive: false });
 
-    // --- Delivery Address Checker (Item 13) ---
+    // --- Delivery Address Checker with Distance Logic (Item 13) ---
     const addressInput = document.querySelector('#delivery-address-input');
     const addressCheckBtn = document.querySelector('#delivery-check-btn');
     const addressStatusMsg = document.querySelector('#delivery-status-msg');
 
     if (addressCheckBtn && addressInput && addressStatusMsg) {
-        addressCheckBtn.addEventListener('click', () => {
-            const val = addressInput.value.toLowerCase().trim();
-            if (!val) {
+        // Coordenadas del local: Belgrano 2881, Parque Batlle, Montevideo
+        const RESTAURANT_COORDS = { lat: -34.8997387, lng: -56.1581452 };
+
+        function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radio de la Tierra en km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        function renderDistanceResult(dist) {
+            if (dist <= 2.2) {
+                addressStatusMsg.className = 'delivery-status-msg success';
+                addressStatusMsg.innerHTML = `
+                    <div class="status-badge-title"><i class="fas fa-check-circle"></i> ¡Excelente! Estás a <strong>${dist.toFixed(1)} km</strong> del local.</div>
+                    <div class="status-badge-desc">Tu dirección pertenece a <strong>Zona 1 (Parque Batlle / Blanqueada / Tres Cruces)</strong>: <strong>Envío SIN CARGO</strong> en 20 a 30 minutos.</div>
+                `;
+            } else if (dist <= 5.0) {
                 addressStatusMsg.className = 'delivery-status-msg express';
-                addressStatusMsg.innerHTML = '⚠️ Por favor ingresá una calle o barrio para verificar.';
-                return;
+                addressStatusMsg.innerHTML = `
+                    <div class="status-badge-title"><i class="fas fa-bolt"></i> ¡Llegamos a tu casa! Estás a <strong>${dist.toFixed(1)} km</strong> del local.</div>
+                    <div class="status-badge-desc">Tu dirección pertenece a <strong>Zona 2 (Pocitos / Buceo / Cordón / Parque Rodó)</strong>: Envío Express <strong>$60 UYU</strong> en 30 a 40 minutos.</div>
+                `;
+            } else if (dist <= 7.0) {
+                addressStatusMsg.className = 'delivery-status-msg express';
+                addressStatusMsg.innerHTML = `
+                    <div class="status-badge-title"><i class="fas fa-motorcycle"></i> ¡Llegamos con delivery! Estás a <strong>${dist.toFixed(1)} km</strong> del local.</div>
+                    <div class="status-badge-desc">Tu dirección está en <strong>Zona Extendida</strong>: Costo de envío <strong>$90 UYU</strong> en 40 a 50 minutos.</div>
+                `;
+            } else {
+                addressStatusMsg.className = 'delivery-status-msg error';
+                addressStatusMsg.innerHTML = `
+                    <div class="status-badge-title"><i class="fas fa-times-circle"></i> Dirección fuera de rango de delivery (${dist.toFixed(1)} km)</div>
+                    <div class="status-badge-desc">Supera nuestro radio máximo de entrega en moto (hasta 7 km del local). ¡Podés pedir para <strong>Take Away / Retiro en el local</strong> (Belgrano 2881) con <strong>15% OFF en efectivo</strong>!</div>
+                `;
             }
+        }
 
-            const zona1Keywords = ['belgrano', 'parque batlle', 'batlle', 'blanqueada', 'tres cruces', 'ricaldoni', 'centenario', 'britanico', 'británico', 'av italia', 'italia', '8 de octubre', 'garibaldi', 'propios', 'bv artigas', 'artigas', 'morquio', 'larrañaga'];
-            const zona2Keywords = ['pocitos', 'buceo', 'cordon', 'cordón', 'parque rodo', 'parque rodó', 'punta carretas', 'palermo', 'centro', 'rivera', 'benito blanco', 'españa', 'brasil', '21 de setiembre', 'rambla', 'ellauri'];
+        function evaluateFallbackZones(val) {
+            const zona1Streets = ['belgrano', 'parque batlle', 'batlle', 'blanqueada', 'tres cruces', 'ricaldoni', 'centenario', 'britanico', 'británico', 'av italia', 'italia', '8 de octubre', 'garibaldi', 'morquio', 'larrañaga'];
+            const zona2Streets = ['pocitos', 'buceo', 'cordon', 'cordón', 'parque rodo', 'parque rodó', 'punta carretas', 'palermo', 'centro', 'rivera', 'benito blanco', 'españa', 'av brasil', 'av. brasil', 'avenida brasil', '21 de setiembre', 'rambla', 'ellauri'];
 
-            const isZona1 = zona1Keywords.some(kw => val.includes(kw));
-            const isZona2 = zona2Keywords.some(kw => val.includes(kw));
+            const isZona1 = zona1Streets.some(kw => val.includes(kw));
+            const isZona2 = zona2Streets.some(kw => val.includes(kw));
 
             if (isZona1) {
                 addressStatusMsg.className = 'delivery-status-msg success';
-                addressStatusMsg.innerHTML = '✅ <strong>¡Excelente! Tu dirección está en Zona 1 (Parque Batlle / Alrededores):</strong> Envío SIN CARGO en 20 a 30 minutos.';
+                addressStatusMsg.innerHTML = '<div class="status-badge-title"><i class="fas fa-check-circle"></i> ¡Excelente! Estás en Zona 1</div><div class="status-badge-desc">Envío <strong>SIN CARGO</strong> en 20 a 30 minutos.</div>';
             } else if (isZona2) {
                 addressStatusMsg.className = 'delivery-status-msg express';
-                addressStatusMsg.innerHTML = '⚡ <strong>¡Llegamos a tu zona! Zona 2 (Pocitos / Buceo / Cordón):</strong> Envío $60 UYU en 30 a 40 minutos.';
+                addressStatusMsg.innerHTML = '<div class="status-badge-title"><i class="fas fa-bolt"></i> ¡Llegamos a tu zona! Zona 2</div><div class="status-badge-desc">Envío Express <strong>$60 UYU</strong> en 30 a 40 minutos.</div>';
             } else {
-                addressStatusMsg.className = 'delivery-status-msg success';
-                addressStatusMsg.innerHTML = '🛵 <strong>¡Llegamos con delivery en Montevideo!</strong> Realizá tu pedido y te confirmamos la entrega inmediata por WhatsApp.';
+                addressStatusMsg.className = 'delivery-status-msg warning';
+                addressStatusMsg.innerHTML = '<div class="status-badge-title"><i class="fas fa-question-circle"></i> Confirmación directa</div><div class="status-badge-desc">No pudimos verificar la distancia automáticamente. Hacé tu pedido por WhatsApp y te confirmamos la entrega al instante.</div>';
+            }
+        }
+
+        async function verifyAddress() {
+            const val = addressInput.value.trim();
+            const lowerVal = val.toLowerCase();
+
+            if (!val) {
+                addressStatusMsg.className = 'delivery-status-msg warning';
+                addressStatusMsg.innerHTML = '<div class="status-badge-title"><i class="fas fa-exclamation-triangle"></i> Ingresá tu dirección</div><div class="status-badge-desc">Por favor ingresá tu calle y número (ej: <strong>Belgrano 2881</strong>).</div>';
+                addressInput.focus();
+                return;
+            }
+
+            // 1. Detección rápida de países o regiones no locales (ej: "brasil")
+            const foreignPlaces = ['brasil', 'brazil', 'argentina', 'chile', 'paraguay', 'madrid', 'españa', 'espana', 'miami', 'eeuu', 'mexico', 'colombia', 'peru', 'venezuela', 'europa', 'bolivia', 'italia', 'francia', 'buenos aires', 'cordoba', 'rosario', 'rio de janeiro', 'sao paulo'];
+            if (foreignPlaces.includes(lowerVal)) {
+                addressStatusMsg.className = 'delivery-status-msg error';
+                addressStatusMsg.innerHTML = `
+                    <div class="status-badge-title"><i class="fas fa-times-circle"></i> Ubicación fuera de cobertura</div>
+                    <div class="status-badge-desc">Ingresaste "<em>${val}</em>". Si te referías a una calle de Montevideo (ej: Av. Brasil), por favor indicá <strong>calle y número</strong> (ej: <strong>Av. Brasil 2600</strong>).</div>
+                `;
+                return;
+            }
+
+            // 2. Comprobar que incluya número de puerta o intersección
+            const hasDigits = /\d+/.test(val);
+            const hasIntersection = /\by\b|\besq\b|\besquina\b/i.test(val);
+
+            if (!hasDigits && !hasIntersection) {
+                addressStatusMsg.className = 'delivery-status-msg warning';
+                addressStatusMsg.innerHTML = `
+                    <div class="status-badge-title"><i class="fas fa-map-pin"></i> Falta el número de puerta</div>
+                    <div class="status-badge-desc">Para calcular si llegamos y medir los kilómetros exactos, ingresá calle y número (ej: <strong>Belgrano 2881</strong> o <strong>Av. Brasil 2600</strong>).</div>
+                `;
+                return;
+            }
+
+            // 3. Geocodificación precisa y cálculo de distancia en km
+            const originalBtnHtml = addressCheckBtn.innerHTML;
+            addressCheckBtn.disabled = true;
+            addressCheckBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+            addressStatusMsg.className = 'delivery-status-msg loading';
+            addressStatusMsg.innerHTML = '<div class="status-badge-desc"><i class="fas fa-compass fa-spin"></i> Calculando distancia desde Belgrano 2881...</div>';
+
+            try {
+                const query = lowerVal.includes('montevideo') ? val : `${val}, Montevideo, Uruguay`;
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+                const resp = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&countrycodes=uy&format=json&limit=1`, {
+                    signal: controller.signal,
+                    headers: { 'Accept-Language': 'es' }
+                });
+                clearTimeout(timeoutId);
+
+                if (resp.ok) {
+                    const results = await resp.json();
+                    if (results && results.length > 0) {
+                        const lat = parseFloat(results[0].lat);
+                        const lon = parseFloat(results[0].lon);
+                        const dist = calculateDistanceKm(RESTAURANT_COORDS.lat, RESTAURANT_COORDS.lng, lat, lon);
+                        renderDistanceResult(dist);
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn('Geocodificación online no disponible, usando fallback:', err);
+            } finally {
+                addressCheckBtn.disabled = false;
+                addressCheckBtn.innerHTML = originalBtnHtml;
+            }
+
+            // 4. Fallback si no hubo respuesta del mapa
+            evaluateFallbackZones(lowerVal);
+        }
+
+        addressCheckBtn.addEventListener('click', verifyAddress);
+        addressInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                verifyAddress();
             }
         });
     }

@@ -1762,6 +1762,7 @@ button, input, select, textarea {
 }
 
 /* Address Checker Widget */
+/* Address Checker Widget */
 .address-checker {
     background: #ffffff;
     border-radius: var(--radius-md);
@@ -1770,11 +1771,20 @@ button, input, select, textarea {
     box-shadow: var(--shadow-sm);
 }
 
+.checker-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
 .address-checker h4 {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--dark);
-    margin-bottom: 1.2rem;
+    margin-bottom: 0;
     display: flex;
     align-items: center;
     gap: 0.8rem;
@@ -1784,13 +1794,40 @@ button, input, select, textarea {
     color: var(--primary);
 }
 
+.checker-hint-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    cursor: help;
+    transition: all 0.2s ease;
+}
+
+.checker-hint-pill:hover {
+    background: #ea580c;
+    color: #ffffff;
+    border-color: #ea580c;
+}
+
 .checker-input-row {
     display: flex;
     gap: 1rem;
 }
 
-.checker-input-row input {
+.checker-input-wrapper {
+    position: relative;
     flex: 1;
+    display: flex;
+}
+
+.checker-input-wrapper input {
+    width: 100%;
     padding: 1.1rem 1.4rem;
     font-size: 1.6rem;
     border: 1.5px solid var(--border-color);
@@ -1801,31 +1838,125 @@ button, input, select, textarea {
     transition: var(--transition);
 }
 
-.checker-input-row input:focus {
+.checker-input-wrapper input:focus {
     border-color: var(--primary);
     background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+
+/* Hover Tooltip for Address Input */
+.checker-hover-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    background: #18181b;
+    color: #ffffff;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.checker-hover-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #18181b transparent transparent transparent;
+}
+
+.checker-input-wrapper:hover .checker-hover-tooltip,
+.checker-input-wrapper input:focus + .checker-hover-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
 .checker-input-row button {
     flex-shrink: 0;
     padding: 1.1rem 2.2rem;
+    font-size: 1.4rem;
+    font-weight: 600;
 }
 
+.checker-helper-note {
+    font-size: 1.25rem;
+    color: #78716c;
+    margin-top: 0.8rem;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.checker-helper-note i {
+    color: var(--primary);
+}
+
+/* Status Messages with Clear Color-coded Feedback */
 .delivery-status-msg {
-    margin-top: 1rem;
+    margin-top: 1.2rem;
     font-size: 1.35rem;
-    font-weight: 600;
+    line-height: 1.5;
+    border-radius: 8px;
+    padding: 1.1rem 1.4rem;
     display: none;
+    animation: fadeIn 0.25s ease-out;
 }
 
 .delivery-status-msg.success {
     display: block;
     color: #15803d;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
 }
 
 .delivery-status-msg.express {
     display: block;
+    color: #c2410c;
+    background: #fff7ed;
+    border: 1px solid #ffedd5;
+}
+
+.delivery-status-msg.warning {
+    display: block;
     color: #b45309;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+}
+
+.delivery-status-msg.error {
+    display: block;
+    color: #dc2626;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+}
+
+.delivery-status-msg.loading {
+    display: block;
+    color: #0284c7;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+}
+
+.delivery-status-msg .status-badge-title {
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.delivery-status-msg .status-badge-desc {
+    font-weight: 500;
+    opacity: 0.95;
 }
 
 /* Map Column */
