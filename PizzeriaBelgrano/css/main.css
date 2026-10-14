@@ -1771,20 +1771,11 @@ button, input, select, textarea {
     box-shadow: var(--shadow-sm);
 }
 
-.checker-header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.2rem;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
 .address-checker h4 {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--dark);
-    margin-bottom: 0;
+    margin-bottom: 1.2rem;
     display: flex;
     align-items: center;
     gap: 0.8rem;
@@ -1792,27 +1783,6 @@ button, input, select, textarea {
 
 .address-checker h4 i {
     color: var(--primary);
-}
-
-.checker-hint-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: #fff7ed;
-    color: #c2410c;
-    border: 1px solid #fed7aa;
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    font-size: 1.25rem;
-    font-weight: 600;
-    cursor: help;
-    transition: all 0.2s ease;
-}
-
-.checker-hint-pill:hover {
-    background: #ea580c;
-    color: #ffffff;
-    border-color: #ea580c;
 }
 
 .checker-input-row {
@@ -1887,20 +1857,6 @@ button, input, select, textarea {
     padding: 1.1rem 2.2rem;
     font-size: 1.4rem;
     font-weight: 600;
-}
-
-.checker-helper-note {
-    font-size: 1.25rem;
-    color: #78716c;
-    margin-top: 0.8rem;
-    margin-bottom: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-}
-
-.checker-helper-note i {
-    color: var(--primary);
 }
 
 /* Status Messages with Clear Color-coded Feedback */

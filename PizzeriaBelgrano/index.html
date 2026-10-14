@@ -1059,17 +1059,12 @@
 
                 <!-- Interactive address checker -->
                 <div class="address-checker">
-                    <div class="checker-header-row">
-                        <h4><i class="fas fa-search-location"></i> Consultá si llegamos a tu casa</h4>
-                        <span class="checker-hint-pill" title="Ingresá calle y número de puerta. Ej: Belgrano 2881">
-                            <i class="fas fa-info-circle"></i> Ej: Belgrano 2881
-                        </span>
-                    </div>
+                    <h4><i class="fas fa-search-location"></i> Consultá si llegamos a tu casa</h4>
                     <div class="checker-input-row">
                         <div class="checker-input-wrapper">
                             <input type="text" id="delivery-address-input"
-                                placeholder="Ej: Belgrano 2881 (calle y número)..."
-                                title="Ingresá calle y número de puerta. Ej: Belgrano 2881"
+                                placeholder="Ingresá tu calle y número (ej: Belgrano 2881)..."
+                                title="Ingresá tu calle y número de puerta. Ej: Belgrano 2881"
                                 autocomplete="street-address">
                             <span class="checker-hover-tooltip">
                                 <i class="fas fa-map-marker-alt"></i> Ingresá calle y número (ej: <strong>Belgrano 2881</strong>)
@@ -1077,9 +1072,6 @@
                         </div>
                         <button type="button" id="delivery-check-btn" class="btn btn-secondary">Verificar</button>
                     </div>
-                    <p class="checker-helper-note">
-                        <i class="fas fa-compass"></i> Ingresá <strong>calle y número de puerta</strong> para medir la distancia exacta en km a tu casa.
-                    </p>
                     <div id="delivery-status-msg" class="delivery-status-msg"></div>
                 </div>
             </div>
