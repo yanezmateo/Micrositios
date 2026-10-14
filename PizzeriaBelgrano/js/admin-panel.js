@@ -101,22 +101,27 @@
             topbar.innerHTML = `
                 <div class="admin-topbar-left">
                     <span class="admin-brand-tag"><i class="fas fa-shield-alt"></i> Modo Dueño</span>
+                    <button class="btn-admin-action btn-admin-logout btn-admin-logout-mobile" id="btn-admin-logout-m" title="Cerrar sesión">
+                        <i class="fas fa-sign-out-alt"></i> <span>Salir</span>
+                    </button>
                 </div>
                 <div class="admin-topbar-right">
-                    <button class="btn-admin-action btn-admin-add" id="btn-admin-add-product">
-                        <i class="fas fa-plus-circle"></i> <span>Nuevo Producto</span>
+                    <button class="btn-admin-action btn-admin-add" id="btn-admin-add-product" title="Agregar nuevo producto">
+                        <i class="fas fa-plus"></i> <span class="txt-desktop">Nuevo Producto</span><span class="txt-mobile">Nuevo</span>
                     </button>
                     <button class="btn-admin-action btn-admin-table" id="btn-admin-table-view" title="Ver y editar todo en formato planilla">
                         <i class="fas fa-table"></i> <span>Planilla</span>
                     </button>
                     <button class="btn-admin-action btn-admin-db" id="btn-admin-db-cfg" title="Estado de la Nube y Conexión">
-                        <span class="admin-status-dot" id="topbar-status-dot" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#22c55e; margin-right:4px;"></span>
-                        <i class="fas fa-cloud"></i> <span id="topbar-db-text">Supabase Conectado</span>
+                        <span class="admin-status-dot" id="topbar-status-dot"></span>
+                        <i class="fas fa-database topbar-db-icon"></i>
+                        <span class="txt-desktop" id="topbar-db-text">Supabase Conectado</span>
+                        <span class="txt-mobile" id="topbar-db-text-mobile">Supabase</span>
                     </button>
                     <button class="btn-admin-action btn-admin-pass" id="btn-admin-change-pass" title="Cambiar Contraseña">
                         <i class="fas fa-key"></i> <span>Clave</span>
                     </button>
-                    <button class="btn-admin-action btn-admin-logout" id="btn-admin-logout" title="Cerrar sesión de administrador">
+                    <button class="btn-admin-action btn-admin-logout btn-admin-logout-desktop" id="btn-admin-logout" title="Cerrar sesión de administrador">
                         <i class="fas fa-sign-out-alt"></i> <span>Salir</span>
                     </button>
                 </div>
@@ -469,13 +474,14 @@
             });
 
             // 4. Topbar buttons
+            const handleLogout = () => {
+                this.db.logout();
+                this.showToast('Sesión de administrador cerrada.');
+            };
             const btnLogout = document.getElementById('btn-admin-logout');
-            if (btnLogout) {
-                btnLogout.addEventListener('click', () => {
-                    this.db.logout();
-                    this.showToast('Sesión de administrador cerrada.');
-                });
-            }
+            const btnLogoutM = document.getElementById('btn-admin-logout-m');
+            if (btnLogout) btnLogout.addEventListener('click', handleLogout);
+            if (btnLogoutM) btnLogoutM.addEventListener('click', handleLogout);
 
             const btnAdd = document.getElementById('btn-admin-add-product');
             if (btnAdd) {
@@ -855,21 +861,26 @@
         updateSyncStatusBadge() {
             const dot = document.getElementById('topbar-status-dot');
             const textEl = document.getElementById('topbar-db-text');
-            if (!dot || !textEl) return;
+            const textM = document.getElementById('topbar-db-text-mobile');
+            if (!dot) return;
 
             const cfg = this.db.config;
             if (!cfg.supabaseUrl || !cfg.supabaseKey) {
                 dot.style.background = '#eab308';
-                textEl.innerText = 'Modo Local';
+                if (textEl) textEl.innerText = 'Modo Local';
+                if (textM) textM.innerText = 'Local';
             } else if (cfg.lastSyncStatus === 'syncing') {
                 dot.style.background = '#38bdf8';
-                textEl.innerText = 'Sincronizando...';
+                if (textEl) textEl.innerText = 'Sincronizando...';
+                if (textM) textM.innerText = 'Sinc...';
             } else if (cfg.lastSyncStatus === 'error') {
                 dot.style.background = '#ef4444';
-                textEl.innerText = 'Error Supabase';
+                if (textEl) textEl.innerText = 'Error Supabase';
+                if (textM) textM.innerText = 'Error';
             } else {
                 dot.style.background = '#22c55e';
-                textEl.innerText = 'Supabase Conectado';
+                if (textEl) textEl.innerText = 'Supabase Conectado';
+                if (textM) textM.innerText = 'Supabase';
             }
         }
 
