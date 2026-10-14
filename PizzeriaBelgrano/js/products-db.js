@@ -724,6 +724,17 @@
             return true;
         }
 
+        async organizeDrive() {
+            if (!this.config.gasUrl) {
+                throw new Error('Primero debés configurar la URL de tu Google Apps Script.');
+            }
+            const res = await this.sendPostRequest({ action: 'organizeDrive' });
+            if (!res || res.status === 'error') {
+                throw new Error((res && res.message) || 'Error al organizar carpetas en Google Drive');
+            }
+            return res;
+        }
+
         logout() {
             sessionStorage.removeItem(ADMIN_SESSION_KEY);
             this.notifyListeners('adminAuthChanged', { isAdmin: false });

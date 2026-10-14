@@ -25,6 +25,14 @@ const CONFIG_SHEET_NAME = 'Configuracion';
 const DEFAULT_ADMIN_USER = 'admin';
 const DEFAULT_ADMIN_PASS = '1111';
 
+// Estructura ordenada en Google Drive:
+// Mi Unidad / Micrositios / LaBelgrano /
+//   ├── [Hoja de cálculo] Pizzería Belgrano - Productos
+//   └── imagenes/ (donde se guardan las fotos de los productos)
+const DRIVE_ROOT_FOLDER = 'Micrositios';
+const DRIVE_PROJECT_FOLDER = 'LaBelgrano';
+const DRIVE_IMAGES_FOLDER = 'imagenes';
+
 /**
  * Obtiene o crea la pestaña de Configuración con usuario y contraseña del dueño
  */
@@ -132,8 +140,125 @@ function createJsonResponse(data) {
 }
 
 /**
+ * Crea o navega por una ruta de carpetas en Google Drive (ej: ['Micrositios', 'LaBelgrano', 'imagenes'])
+ */
+function getOrCreateFolderHierarchy(pathArray) {
+  let currentFolder = DriveApp.getRootFolder();
+  for (let i = 0; i < pathArray.length; i++) {
+    const name = String(pathArray[i]).trim();
+    if (!name) continue;
+    const subFolders = currentFolder.getFoldersByName(name);
+    if (subFolders.hasNext()) {
+      currentFolder = subFolders.next();
+    } else {
+      currentFolder = currentFolder.createFolder(name);
+    }
+  }
+  return currentFolder;
+}
+
+/**
+ * Obtiene la carpeta de imágenes en Google Drive:
+ * 1. Si el Google Sheet ya está dentro de una carpeta del proyecto (ej: el dueño ya lo movió a "LaBelgrano"),
+ *    busca o crea la subcarpeta "imagenes" adentro de esa misma carpeta.
+ * 2. Si no, navega/crea la jerarquía completa: Micrositios > LaBelgrano > imagenes.
+ * Además, garantiza permisos de lectura pública sobre la carpeta para que las fotos carguen en la web.
+ */
+function getImagesFolder() {
+  try {
+    // 1. Detectar si el Google Sheet ya está en una carpeta del proyecto (no en la raíz)
+    const ssFile = DriveApp.getFileById(SpreadsheetApp.getActiveSpreadsheet().getId());
+    const parents = ssFile.getParents();
+    if (parents.hasNext()) {
+      const parent = parents.next();
+      if (parent.getId() !== DriveApp.getRootFolder().getId()) {
+        const sub = parent.getFoldersByName(DRIVE_IMAGES_FOLDER);
+        const folder = sub.hasNext() ? sub.next() : parent.createFolder(DRIVE_IMAGES_FOLDER);
+        folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        return folder;
+      }
+    }
+  } catch (e) {
+    Logger.log('Aviso detectando ubicación del Sheet: ' + e);
+  }
+
+  // 2. Jerarquía por defecto: Micrositios / LaBelgrano / imagenes
+  const folder = getOrCreateFolderHierarchy([DRIVE_ROOT_FOLDER, DRIVE_PROJECT_FOLDER, DRIVE_IMAGES_FOLDER]);
+  folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  return folder;
+}
+
+/**
+ * Función para organizar automáticamente todo el Drive con 1 clic:
+ * 1. Crea la carpeta "Micrositios" si no existe
+ * 2. Crea la subcarpeta "LaBelgrano" adentro
+ * 3. Crea la subcarpeta "imagenes" adentro
+ * 4. Mueve este archivo de Google Sheet adentro de "Micrositios/LaBelgrano" si está suelto en la raíz
+ */
+function organizarMiDrive() {
+  try {
+    const projectFolder = getOrCreateFolderHierarchy([DRIVE_ROOT_FOLDER, DRIVE_PROJECT_FOLDER]);
+    const imgFolder = getOrCreateFolderHierarchy([DRIVE_ROOT_FOLDER, DRIVE_PROJECT_FOLDER, DRIVE_IMAGES_FOLDER]);
+    imgFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+    const ssFile = DriveApp.getFileById(SpreadsheetApp.getActiveSpreadsheet().getId());
+    
+    // Verificar si ya está en la carpeta del proyecto
+    let alreadyInProject = false;
+    const parents = ssFile.getParents();
+    while (parents.hasNext()) {
+      const p = parents.next();
+      if (p.getId() === projectFolder.getId()) {
+        alreadyInProject = true;
+      }
+    }
+
+    if (!alreadyInProject) {
+      if (typeof ssFile.moveTo === 'function') {
+        ssFile.moveTo(projectFolder);
+      } else {
+        projectFolder.addFile(ssFile);
+        DriveApp.getRootFolder().removeFile(ssFile);
+      }
+    }
+
+    const msg = '✅ ¡Google Drive organizado con éxito!\n\n' +
+      '📂 Tu estructura ordenada en Google Drive:\n' +
+      'Mi Unidad > ' + DRIVE_ROOT_FOLDER + ' > ' + DRIVE_PROJECT_FOLDER + '\n' +
+      '  ├── 📊 ' + SpreadsheetApp.getActiveSpreadsheet().getName() + '\n' +
+      '  └── 📁 ' + DRIVE_IMAGES_FOLDER + '/ (fotos públicas para la web)';
+
+    try {
+      SpreadsheetApp.getUi().alert('Pizzería Belgrano - Drive Organizado', msg, SpreadsheetApp.getUi().ButtonSet.OK);
+    } catch (uiErr) {}
+
+    return { status: 'success', message: msg };
+  } catch (err) {
+    const errorMsg = 'Error al organizar carpetas en Drive: ' + err.toString();
+    try {
+      SpreadsheetApp.getUi().alert('Error', errorMsg, SpreadsheetApp.getUi().ButtonSet.OK);
+    } catch (uiErr) {}
+    return { status: 'error', message: errorMsg };
+  }
+}
+
+/**
+ * Menú personalizado en Google Sheets para acceso rápido
+ */
+function onOpen() {
+  try {
+    const ui = SpreadsheetApp.getUi();
+    ui.createMenu('🍕 Pizzería Belgrano')
+      .addItem('📁 Organizar Drive (Micrositios/LaBelgrano)', 'organizarMiDrive')
+      .addToUi();
+  } catch (e) {
+    // Si se ejecuta sin interfaz gráfica (ej: webhook), ignorar
+  }
+}
+
+/**
  * Guarda una imagen en base64 directamente en la carpeta de Google Drive del dueño
- * y devuelve el enlace público directo a la imagen.
+ * (Micrositios > LaBelgrano > imagenes) y devuelve el enlace público directo a la imagen.
  */
 function saveImageToDrive(base64Data, filename) {
   try {
@@ -153,9 +278,8 @@ function saveImageToDrive(base64Data, filename) {
     const bytes = Utilities.base64Decode(base64String);
     const blob = Utilities.newBlob(bytes, contentType, filename || ('producto_' + Date.now() + '.jpg'));
     
-    const folderName = 'Pizzería Belgrano - Fotos';
-    const folders = DriveApp.getFoldersByName(folderName);
-    let folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(folderName);
+    // Carpeta ordenada: Micrositios > LaBelgrano > imagenes
+    const folder = getImagesFolder();
     
     const file = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
@@ -242,6 +366,12 @@ function doPost(e) {
         message: '¡Conexión establecida con Google Sheets correctamente!',
         sheetName: sheet.getName()
       });
+    }
+
+    // 1.1 Organizar carpetas de Google Drive (Micrositios / LaBelgrano / imagenes)
+    if (action === 'organizeDrive') {
+      const result = organizarMiDrive();
+      return createJsonResponse(result);
     }
 
     // 2. Login de Administrador (valida contra la pestaña 'Configuracion' del Google Sheet)

@@ -270,6 +270,9 @@
                             <button type="button" class="btn-sheets-action btn-sheets-import" id="btn-sheets-import-all">
                                 <i class="fas fa-cloud-download-alt"></i> <span>Descargar desde Sheets</span>
                             </button>
+                            <button type="button" class="btn-sheets-action btn-sheets-organize" id="btn-sheets-organize-drive" style="grid-column: 1 / -1; background: #0284c7; color: #ffffff; border: 1px solid #38bdf8;">
+                                <i class="fas fa-folder-plus"></i> <span>Organizar Drive: Micrositios / LaBelgrano</span>
+                            </button>
                         </div>
 
                         <!-- Step-by-step Setup Guide -->
@@ -652,6 +655,37 @@
                         btnImportAll.innerHTML = '<i class="fas fa-times"></i> Error';
                         setTimeout(() => { btnImportAll.innerHTML = '<i class="fas fa-cloud-download-alt"></i> Descargar desde Sheets'; }, 3000);
                         alert('Error al traer datos desde Google Sheets: ' + err.message);
+                    }
+                });
+            }
+
+            const btnOrganizeDrive = document.getElementById('btn-sheets-organize-drive');
+            if (btnOrganizeDrive) {
+                btnOrganizeDrive.addEventListener('click', async () => {
+                    const inputUrl = document.getElementById('sheets-web-app-url');
+                    if (inputUrl && inputUrl.value.trim()) {
+                        this.db.saveConfig(inputUrl.value.trim());
+                    }
+                    if (!this.db.config.gasUrl) {
+                        alert('Primero configurá y guardá la URL de Google Sheets.');
+                        return;
+                    }
+
+                    btnOrganizeDrive.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Organizando Drive...';
+                    try {
+                        const res = await this.db.organizeDrive();
+                        btnOrganizeDrive.innerHTML = '<i class="fas fa-check"></i> ¡Drive Organizado!';
+                        setTimeout(() => {
+                            btnOrganizeDrive.innerHTML = '<i class="fas fa-folder-plus"></i> <span>Organizar Drive: Micrositios / LaBelgrano</span>';
+                        }, 3000);
+                        alert(res.message || '✅ ¡Estructura de carpetas organizada en tu Google Drive con éxito!');
+                        this.showToast('Google Drive organizado correctamente.');
+                    } catch (err) {
+                        btnOrganizeDrive.innerHTML = '<i class="fas fa-times"></i> Error';
+                        setTimeout(() => {
+                            btnOrganizeDrive.innerHTML = '<i class="fas fa-folder-plus"></i> <span>Organizar Drive: Micrositios / LaBelgrano</span>';
+                        }, 3000);
+                        alert('❌ Error al organizar Google Drive: ' + err.message);
                     }
                 });
             }

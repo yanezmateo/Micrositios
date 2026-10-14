@@ -107,18 +107,35 @@ Es para **promociones y descuentos tachados**:
 
 ---
 
-## 📸 ¿Cómo subir fotos de las pizzas? (¡Ahora en 1 Clic!)
+## 📸 ¿Cómo subir fotos de las pizzas y dónde se guardan en Drive?
 
-¡Ya no hace falta usar sitios externos como Imgur o Postimages ni copiar enlaces raros! El sistema ahora lo hace 100% automático:
+¡Ya no hace falta usar sitios externos como Imgur o Postimages ni copiar enlaces raros! El sistema ahora lo hace 100% automático y ordenado:
 
-### 🌟 Opción 1 (Recomendada): Sacar foto desde el celular o subirla desde la PC en 1 Clic
+### 📁 Estructura ordenada en tu Google Drive:
+Todas las fotos y tu planilla quedan impecablemente organizadas en tu Drive dentro de:
+```text
+Mi Unidad
+ └── Micrositios
+      └── LaBelgrano
+           ├── 📊 Pizzería Belgrano - Productos (tu Google Sheet)
+           └── 📁 imagenes/ (aquí se guardan todas las fotos de los productos)
+```
+
+> **¿Cómo ordenar tu Drive con 1 clic?**
+> * **Desde la web:** En la barra de administrador tocá **[Google Sheets]** y hacé clic en **[📁 Organizar Drive: Micrositios / LaBelgrano]**.
+> * **O desde Google Sheets:** En el menú superior de tu planilla vas a ver un nuevo menú **"🍕 Pizzería Belgrano"** > **"📁 Organizar Drive"**.
+> * ¡Crea las carpetas y mueve el archivo automáticamente sin que tengas que hacer nada a mano!
+
+---
+
+### 🌟 Subir foto desde el celular o desde la PC en 1 Clic
 1. Entrás a la web con tu contraseña de administrador (`1111`).
 2. Tocás **[➕ Nuevo Producto]** o **[✏️ Editar]** en cualquier pizza o plato.
 3. Tocás el botón naranja grande **📸 "Sacar Foto con el Celular / Elegir Archivo"**.
 4. Sacás la foto en el momento con la cámara de tu celular o elegís una de tu galería / computadora.
 5. Tocás **"Guardar Producto"**:
-   - La web optimiza la imagen en milisegundos para que suba rápido.
-   - La guarda automáticamente en una carpeta en tu **Google Drive** llamada **`Pizzería Belgrano - Fotos`**.
+   - La web optimiza la imagen en milisegundos para que suba súper rápido.
+   - La guarda automáticamente dentro de tu carpeta **`Micrositios / LaBelgrano / imagenes/`** en Google Drive.
    - Coloca el enlace directo de Google Drive en la columna `Imagen` de tu Google Sheet.
    - ¡Y listo! La foto queda visible inmediatamente para todos los clientes en la carta.
 
