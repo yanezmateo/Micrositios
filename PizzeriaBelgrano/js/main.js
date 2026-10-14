@@ -412,21 +412,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Attach "Agregar" buttons to open Customization Modal
-    document.querySelectorAll('.btn-add-to-cart').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const id = btn.getAttribute('data-id');
-            const name = btn.getAttribute('data-name');
-            const price = parseFloat(btn.getAttribute('data-price'));
-            const image = btn.getAttribute('data-image');
-            const category = btn.getAttribute('data-category');
-            const ingredients = btn.getAttribute('data-ingredients');
-            const variants = btn.getAttribute('data-variants');
-            const desc = btn.getAttribute('data-desc');
+    // Delegated click listener for all "Agregar" buttons (works for dynamically rendered products)
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-add-to-cart');
+        if (!btn) return;
+        e.preventDefault();
+        const id = btn.getAttribute('data-id');
+        const dbItem = window.productsDb ? window.productsDb.getProductById(id) : null;
 
-            openCustomModal({ id, name, price, image, category, ingredients, variants, desc });
-        });
+        const name = dbItem ? dbItem.name : btn.getAttribute('data-name');
+        const price = dbItem ? dbItem.price : parseFloat(btn.getAttribute('data-price'));
+        const image = dbItem ? dbItem.image : btn.getAttribute('data-image');
+        const category = dbItem ? dbItem.category : btn.getAttribute('data-category');
+        const ingredients = dbItem ? dbItem.ingredients : btn.getAttribute('data-ingredients');
+        const variants = dbItem ? dbItem.variants : btn.getAttribute('data-variants');
+        const desc = dbItem ? dbItem.desc : btn.getAttribute('data-desc');
+
+        openCustomModal({ id, name, price, image, category, ingredients, variants, desc });
     });
 
     // --- Render Cart UI ---
@@ -665,6 +667,117 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // --- Dynamic Catalog Rendering from Products Database / Google Sheets ---
+    function renderDynamicProducts() {
+        if (!window.productsDb) return;
+
+        // 1. Promos Grid
+        const promosContainer = document.querySelector('.promos-grid');
+        if (promosContainer) {
+            const promos = window.productsDb.getProductsByCategory('promos');
+            if (promos && promos.length > 0) {
+                promosContainer.innerHTML = promos.map(p => `
+                    <div class="promo-card ${p.badge ? 'promo-card-featured' : ''}" data-category="promos">
+                        <div class="admin-card-actions">
+                            <button class="btn-card-edit" data-id="${p.id}" title="Editar Producto"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="btn-card-delete" data-id="${p.id}" title="Eliminar Producto"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                        ${p.badge ? `<div class="promo-badge-tag"><i class="fas fa-crown"></i> ${p.badge}</div>` : ''}
+                        <div class="promo-img-wrapper">
+                            <img src="${p.image}" alt="${p.name}">
+                        </div>
+                        <div class="promo-card-content">
+                            <div class="promo-header-row">
+                                <h3>${p.name}</h3>
+                                <div class="promo-prices">
+                                    ${p.old_price ? `<span class="old-price">$${p.old_price}</span>` : ''}
+                                    <span class="current-price">$${p.price}</span>
+                                </div>
+                            </div>
+                            <p class="promo-desc">${p.desc}</p>
+                            <div class="promo-footer-row">
+                                ${p.old_price && p.old_price > p.price ? `<span class="promo-saving-pill"><i class="fas fa-tag"></i> Ahorrá $${p.old_price - p.price}</span>` : ''}
+                                <button class="btn-add-to-cart btn-promo-add"
+                                        data-id="${p.id}"
+                                        data-name="${p.name}"
+                                        data-price="${p.price}"
+                                        data-image="${p.image}"
+                                        data-category="promos"
+                                        data-ingredients="${p.ingredients || ''}"
+                                        data-desc="${p.desc || ''}">
+                                    <i class="fas fa-plus"></i> Agregar Promo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // 2. Swiper Categories: pizzas, sandwiches, faina, lemeyun, bebidas
+        const categories = ['pizzas', 'sandwiches', 'faina', 'lemeyun', 'bebidas'];
+        categories.forEach(cat => {
+            const wrapper = document.querySelector(`.slider-${cat} .swiper-wrapper`);
+            if (wrapper) {
+                const items = window.productsDb.getProductsByCategory(cat);
+                if (items && items.length > 0) {
+                    wrapper.innerHTML = items.map(p => `
+                        <div class="swiper-slide box" data-category="${p.category}">
+                            <div class="admin-card-actions">
+                                <button class="btn-card-edit" data-id="${p.id}" title="Editar Producto"><i class="fas fa-pencil-alt"></i></button>
+                                <button class="btn-card-delete" data-id="${p.id}" title="Eliminar Producto"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                            <div class="product-img-wrapper">
+                                <img src="${p.image}" alt="${p.name}">
+                            </div>
+                            <div class="product-content">
+                                <div class="product-header-row">
+                                    <h3>${p.name}</h3>
+                                    <span class="price">$${p.price}</span>
+                                </div>
+                                <p class="product-description">${p.desc}</p>
+                                <div class="product-footer-row">
+                                    <div class="stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <button class="btn-add-to-cart" 
+                                            data-id="${p.id}" 
+                                            data-name="${p.name}" 
+                                            data-price="${p.price}" 
+                                            data-image="${p.image}"
+                                            data-category="${p.category}"
+                                            data-ingredients="${p.ingredients || ''}"
+                                            data-variants="${p.variants || ''}"
+                                            data-desc="${p.desc || ''}">
+                                        <i class="fas fa-plus"></i> Agregar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Update Swiper if already initialized
+            if (window.swipersMap && window.swipersMap[cat]) {
+                window.swipersMap[cat].update();
+            }
+        });
+    }
+
+    // Initialize Products DB and initial render
+    if (window.productsDb) {
+        window.productsDb.init().then(() => {
+            renderDynamicProducts();
+        });
+    }
+    window.addEventListener('productsReady', renderDynamicProducts);
+    window.addEventListener('productsUpdated', renderDynamicProducts);
 
     // --- Initialize Swiper Carousels ---
     if (typeof Swiper !== 'undefined') {

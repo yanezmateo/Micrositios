@@ -1,0 +1,828 @@
+/* ==========================================================================
+   PIZZERÍA BELGRANO - ADMIN PANEL & GOOGLE SHEETS SYNC STYLES
+   ========================================================================== */
+
+/* --- Admin Top Bar --- */
+.admin-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10000;
+    background: rgba(20, 20, 22, 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 2px solid #ea580c;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    padding: 0.8rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    color: #f4f4f5;
+    font-size: 1.3rem;
+    transform: translateY(-100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-topbar.active {
+    transform: translateY(0);
+}
+
+/* Offset body when admin topbar is active */
+body.admin-mode-active {
+    padding-top: 4.8rem !important;
+}
+
+body.admin-mode-active .header {
+    top: 4.8rem !important;
+}
+
+.admin-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.admin-brand-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: linear-gradient(135deg, #c2410c, #ea580c);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.2rem;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Status Pill */
+.admin-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.4rem 1.2rem;
+    border-radius: 9999px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-status-pill:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.admin-status-pill.synced {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.admin-status-pill.local {
+    background: rgba(234, 179, 8, 0.15);
+    color: #facc15;
+    border-color: rgba(234, 179, 8, 0.3);
+}
+
+.admin-status-pill.syncing {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.admin-status-pill.error {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.admin-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: currentColor;
+    display: inline-block;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.admin-status-pill.syncing .admin-status-dot {
+    animation: pulseSync 1s infinite alternate;
+}
+
+@keyframes pulseSync {
+    from { opacity: 0.4; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1.3); }
+}
+
+/* Actions Right */
+.admin-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-admin-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-admin-add {
+    background: #ea580c;
+    color: #ffffff;
+}
+
+.btn-admin-add:hover {
+    background: #c2410c;
+    transform: translateY(-1px);
+}
+
+.btn-admin-sheets {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.btn-admin-sheets:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #38bdf8;
+}
+
+.btn-admin-pass {
+    background: rgba(250, 204, 21, 0.15);
+    color: #facc15;
+    border: 1px solid rgba(250, 204, 21, 0.3);
+}
+
+.btn-admin-pass:hover {
+    background: rgba(250, 204, 21, 0.25);
+    color: #fef08a;
+    transform: translateY(-1px);
+}
+
+.btn-admin-logout {
+    background: transparent;
+    color: #a1a1aa;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-admin-logout:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* --- Editable Product Cards Overlay --- */
+body.admin-mode-active .box,
+body.admin-mode-active .promo-card {
+    position: relative;
+    outline: 2px dashed rgba(234, 88, 12, 0.35);
+    outline-offset: 4px;
+    transition: outline-color 0.2s ease, transform 0.2s ease;
+}
+
+body.admin-mode-active .box:hover,
+body.admin-mode-active .promo-card:hover {
+    outline-color: #ea580c;
+}
+
+.admin-card-actions {
+    display: none;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 20;
+    gap: 0.6rem;
+}
+
+body.admin-mode-active .admin-card-actions {
+    display: flex;
+}
+
+.btn-card-edit,
+.btn-card-delete {
+    width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+.btn-card-edit {
+    background: #2563eb;
+}
+
+.btn-card-edit:hover {
+    background: #1d4ed8;
+    transform: scale(1.12);
+}
+
+.btn-card-delete {
+    background: #dc2626;
+}
+
+.btn-card-delete:hover {
+    background: #b91c1c;
+    transform: scale(1.12);
+}
+
+/* Quick price highlight on admin */
+body.admin-mode-active .product-header-row .price,
+body.admin-mode-active .promo-prices .current-price {
+    position: relative;
+    cursor: pointer;
+    padding: 0.2rem 0.6rem;
+    background: rgba(234, 88, 12, 0.1);
+    border-radius: 6px;
+    border: 1px dashed #ea580c;
+}
+
+/* --- Admin Modals --- */
+.admin-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 12, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.admin-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.admin-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    background: #18181b;
+    color: #f4f4f5;
+    width: 92%;
+    max-width: 680px;
+    max-height: 90vh;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    z-index: 10002;
+    overflow: hidden; /* Corta bordes redondeados y evita que el contenido se escape al piso */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-modal.active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+/* El formulario interno ocupa el 100% de la altura y gestiona flex */
+.admin-modal form {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+}
+
+.admin-modal-header {
+    padding: 1.6rem 2.2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #18181b;
+    flex-shrink: 0;
+    z-index: 2;
+}
+
+.admin-modal-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-modal-title i {
+    color: #ea580c;
+}
+
+.admin-modal-close {
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: #a1a1aa;
+    width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.admin-modal-close:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.admin-modal-body {
+    padding: 2rem 2.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.admin-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.6rem;
+}
+
+@media (max-width: 600px) {
+    .admin-form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.admin-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.admin-field-label {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #d4d4d8;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-field-label small {
+    color: #a1a1aa;
+    font-weight: 400;
+}
+
+.admin-input,
+.admin-select,
+.admin-textarea {
+    width: 100%;
+    background: #27272a;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 1.1rem 1.4rem;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 1.35rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.admin-input:focus,
+.admin-select:focus,
+.admin-textarea:focus {
+    border-color: #ea580c;
+    background: #232326;
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.2);
+}
+
+.admin-textarea {
+    min-height: 85px;
+    resize: vertical;
+}
+
+/* Image preview section */
+.admin-image-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    background: #222226;
+    padding: 1.4rem;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-upload-device-box {
+    background: rgba(234, 88, 12, 0.06);
+    border: 2px dashed rgba(234, 88, 12, 0.35);
+    border-radius: 12px;
+    padding: 1.2rem;
+    text-align: center;
+    transition: all 0.25s ease;
+}
+
+.admin-upload-device-box:hover {
+    border-color: rgba(234, 88, 12, 0.7);
+    background: rgba(234, 88, 12, 0.1);
+}
+
+.btn-upload-device {
+    width: 100%;
+    background: linear-gradient(135deg, #ea580c, #f97316);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 1.1rem 1.6rem;
+    font-size: 1.35rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9rem;
+    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+    transition: all 0.2s ease;
+}
+
+.btn-upload-device:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.5);
+    filter: brightness(1.08);
+}
+
+.btn-upload-device:active {
+    transform: translateY(0);
+}
+
+.upload-file-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+    font-size: 1.2rem;
+    color: #cbd5e1;
+    font-weight: 500;
+}
+
+.admin-subfield-label {
+    display: block;
+    font-size: 1.15rem;
+    color: #a1a1aa;
+    margin-bottom: 0.4rem;
+}
+
+.admin-quick-images-details {
+    margin-top: 0.4rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-top: 0.8rem;
+}
+
+.quick-images-summary {
+    cursor: pointer;
+    font-size: 1.25rem;
+    color: #a1a1aa;
+    padding: 0.4rem 0;
+    user-select: none;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.quick-images-summary:hover {
+    color: #f97316;
+}
+
+.admin-image-preview-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.admin-image-preview {
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    object-fit: cover;
+    background: #18181b;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.admin-quick-images {
+    display: flex;
+    gap: 0.8rem;
+    overflow-x: auto;
+    padding: 0.8rem 0 0.5rem 0;
+}
+
+.quick-img-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.quick-img-thumb:hover,
+.quick-img-thumb.selected {
+    border-color: #ea580c;
+    transform: scale(1.08);
+}
+
+/* Modal Footer */
+.admin-modal-footer {
+    padding: 1.4rem 2.2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1.2rem;
+    background: #18181b;
+    flex-shrink: 0;
+    margin-top: auto;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+    position: relative;
+    z-index: 5;
+}
+
+.btn-admin-cancel {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e4e4e7;
+    border: none;
+    padding: 1rem 1.8rem;
+    border-radius: 10px;
+    font-size: 1.35rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-admin-cancel:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-admin-save {
+    background: linear-gradient(135deg, #c2410c, #ea580c);
+    color: #ffffff;
+    border: none;
+    padding: 1rem 2.4rem;
+    border-radius: 10px;
+    font-size: 1.35rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.btn-admin-save:hover {
+    background: linear-gradient(135deg, #9a3412, #c2410c);
+    box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-admin-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* --- Google Sheets Settings Modal Styles --- */
+.sheets-setup-card {
+    background: #222226;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.sheets-steps-list {
+    margin: 0;
+    padding-left: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    font-size: 1.3rem;
+    color: #d4d4d8;
+    line-height: 1.5;
+}
+
+.sheets-steps-list li strong {
+    color: #ffffff;
+}
+
+.sheets-copy-code-box {
+    background: #111113;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 1rem 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.btn-copy-code {
+    background: rgba(234, 88, 12, 0.15);
+    color: #ea580c;
+    border: 1px solid rgba(234, 88, 12, 0.3);
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.25rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.btn-copy-code:hover {
+    background: #ea580c;
+    color: #ffffff;
+}
+
+.sheets-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+}
+
+@media (max-width: 550px) {
+    .sheets-actions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.btn-sheets-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    padding: 1.1rem;
+    border-radius: 10px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-sheets-export {
+    background: #15803d;
+    color: #ffffff;
+}
+
+.btn-sheets-export:hover {
+    background: #166534;
+    transform: translateY(-1px);
+}
+
+.btn-sheets-import {
+    background: #0369a1;
+    color: #ffffff;
+}
+
+.btn-sheets-import:hover {
+    background: #075985;
+    transform: translateY(-1px);
+}
+
+/* Notice box in Login form */
+.login-hint-box {
+    margin-top: 1.2rem;
+    padding: 0.8rem 1.2rem;
+    background: rgba(234, 88, 12, 0.08);
+    border: 1px dashed rgba(234, 88, 12, 0.4);
+    border-radius: 8px;
+    font-size: 1.2rem;
+    color: #fdba74;
+    text-align: center;
+}
+
+.login-hint-box strong {
+    color: #ffffff;
+}
+
+/* Delete Confirm Modal Specific */
+.delete-confirm-body {
+    text-align: center;
+    padding: 2.5rem 2rem;
+}
+
+.delete-confirm-icon {
+    font-size: 4.8rem;
+    color: #ef4444;
+    margin-bottom: 1.5rem;
+}
+
+.delete-confirm-title {
+    font-size: 1.8rem;
+    color: #ffffff;
+    margin-bottom: 0.8rem;
+}
+
+.delete-confirm-text {
+    font-size: 1.35rem;
+    color: #a1a1aa;
+    line-height: 1.5;
+}
+
+/* Mobile adjustments for Admin Modals (touches floor perfectly and clips corners) */
+@media (max-width: 600px) {
+    .admin-modal {
+        width: 94%;
+        max-height: 86vh;
+        border-radius: 16px;
+    }
+
+    .admin-modal-header {
+        padding: 1.4rem 1.6rem;
+    }
+
+    .admin-modal-title {
+        font-size: 1.55rem;
+    }
+
+    .admin-modal-body {
+        padding: 1.6rem 1.4rem;
+        gap: 1.3rem;
+    }
+
+    .admin-modal-footer {
+        padding: 1.2rem 1.4rem;
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+        gap: 0.8rem;
+    }
+
+    .admin-modal-footer .btn-admin-cancel {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.1rem 0.5rem;
+        font-size: 1.3rem;
+    }
+
+    .admin-modal-footer .btn-admin-save {
+        flex: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.1rem 0.5rem;
+        font-size: 1.3rem;
+    }
+
+    .admin-image-preview-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .admin-image-preview {
+        width: 60px;
+        height: 60px;
+    }
+}

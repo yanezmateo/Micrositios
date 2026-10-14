@@ -27,6 +27,9 @@
     
     <!-- Custom Main Styles -->
     <link rel="stylesheet" href="css/main.css">
+    
+    <!-- Admin & Google Sheets Styles -->
+    <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
 
@@ -67,8 +70,11 @@
         <!-- Login Form Modal -->
         <form class="login-form" onsubmit="event.preventDefault();">
             <h3>Mi Cuenta</h3>
-            <input type="email" placeholder="Correo electrónico" class="input-field" required>
-            <input type="password" placeholder="Contraseña" class="input-field" required>
+            <input type="text" id="login-username" placeholder="Usuario o Correo (admin)" class="input-field" required autocomplete="username">
+            <input type="password" id="login-password" placeholder="Contraseña (1111)" class="input-field" required autocomplete="current-password">
+            <div class="login-hint-box">
+                <i class="fas fa-shield-alt"></i> Acceso Dueño: <strong>admin</strong> | Clave: <strong>1111</strong>
+            </div>
             <div class="form-links">
                 <p>¿Olvidaste tu contraseña? <a href="#">Recuperar</a></p>
                 <p>¿No tenés cuenta? <a href="#">Registrate</a></p>
@@ -1372,8 +1378,16 @@
     <!-- Swiper JS -->
     <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
 
+    <!-- Global Config (Online URL for Git) -->
+    <script src="js/config.js"></script>
+
+    <!-- Products Database & Google Sheets Connector -->
+    <script src="js/products-db.js"></script>
+
     <!-- Custom Main JS -->
     <script src="js/main.js"></script>
 
+    <!-- Admin Panel Controller -->
+    <script src="js/admin-panel.js"></script>
 </body>
 </html>
