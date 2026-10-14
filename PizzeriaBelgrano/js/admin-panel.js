@@ -666,6 +666,8 @@
                         alert('Encontrá el código completo listo para pegar en el archivo: google-sheets-backend.gs');
                     });
                 });
+            }
+
             // 7.1 Change Password Modal events
             const btnChangePass = document.getElementById('btn-admin-change-pass');
             const passModal = document.getElementById('admin-password-modal');
