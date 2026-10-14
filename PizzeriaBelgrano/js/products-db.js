@@ -826,6 +826,7 @@
                     .upsert({ clave: 'admin_password', valor: newPass, updated_at: new Date().toISOString() });
                 if (error) {
                     console.error('[SupabaseDB] Error guardando contraseña en Supabase:', error);
+                    throw new Error('No se pudo guardar la contraseña en la nube de Supabase: ' + error.message);
                 }
             }
 

@@ -3,7 +3,7 @@
  * PIZZERÍA BELGRANO - ADMIN PANEL CONTROLLER
  * ==========================================================================
  * Controla la barra superior de administrador, formularios de edición/creación,
- * eliminación de productos y sincronización con Google Sheets.
+ * eliminación de productos, planilla en vivo y sincronización con Supabase (PostgreSQL & Storage).
  */
 
 (function(window, document) {
@@ -94,24 +94,24 @@
          * Inyecta el Topbar de Admin y los modales en el DOM
          */
         injectAdminHtml() {
-            // 1. Admin Topbar
+            // 1. Admin Topbar (Unificado y limpio)
             const topbar = document.createElement('div');
             topbar.className = 'admin-topbar';
             topbar.id = 'admin-topbar';
             topbar.innerHTML = `
                 <div class="admin-topbar-left">
                     <span class="admin-brand-tag"><i class="fas fa-shield-alt"></i> Modo Dueño</span>
-                    <div class="admin-status-pill local" id="admin-status-pill" title="Clic para ver estado de la base de datos">
-                        <span class="admin-status-dot"></span>
-                        <span class="admin-status-text">Base de Datos: Supabase</span>
-                    </div>
                 </div>
                 <div class="admin-topbar-right">
                     <button class="btn-admin-action btn-admin-add" id="btn-admin-add-product">
                         <i class="fas fa-plus-circle"></i> <span>Nuevo Producto</span>
                     </button>
-                    <button class="btn-admin-action btn-admin-db" id="btn-admin-db-cfg" title="Estado de la Base de Datos">
-                        <i class="fas fa-database"></i> <span>Base de Datos</span>
+                    <button class="btn-admin-action btn-admin-table" id="btn-admin-table-view" title="Ver y editar todo en formato planilla">
+                        <i class="fas fa-table"></i> <span>Planilla</span>
+                    </button>
+                    <button class="btn-admin-action btn-admin-db" id="btn-admin-db-cfg" title="Estado de la Nube y Conexión">
+                        <span class="admin-status-dot" id="topbar-status-dot" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#22c55e; margin-right:4px;"></span>
+                        <i class="fas fa-cloud"></i> <span id="topbar-db-text">Supabase Conectado</span>
                     </button>
                     <button class="btn-admin-action btn-admin-pass" id="btn-admin-change-pass" title="Cambiar Contraseña">
                         <i class="fas fa-key"></i> <span>Clave</span>
@@ -199,7 +199,7 @@
                                         <i class="fas fa-camera"></i> <span>Sacar Foto con el Celular / Elegir Archivo</span>
                                     </button>
                                     <div class="upload-file-status" id="upload-file-status">
-                                        <i class="fas fa-cloud-upload-alt"></i> Se guardará automáticamente en tu Google Drive
+                                        <i class="fas fa-cloud-upload-alt"></i> Se guardará automáticamente en Supabase Storage (CDN)
                                     </div>
                                 </div>
 
@@ -266,26 +266,65 @@
                         </div>
 
                         <!-- 1-Click Cloud Actions -->
-                        <div class="sheets-actions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-                            <a href="https://supabase.com/dashboard/project/rsuubjaeglnfxiprvqim/editor" target="_blank" class="btn-sheets-action" style="grid-column: 1 / -1; background: #0284c7; color: #ffffff; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.8rem; padding: 1rem; border-radius: 8px; font-weight: 600; font-size: 1.3rem;">
-                                <i class="fas fa-external-link-alt"></i> <span>Abrir Editor Visual de Supabase (Estilo Excel)</span>
-                            </a>
-                            <button type="button" class="btn-sheets-action btn-sheets-import" id="btn-db-refresh-all" style="background: #27272a; border: 1px solid #3f3f46; color: #ffffff; padding: 0.9rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                                <i class="fas fa-sync-alt"></i> <span>Refrescar Catálogo</span>
+                        <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
+                            <button type="button" class="btn-sheets-action" id="btn-db-open-table" style="background: #0284c7; color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 0.8rem; padding: 1.1rem; border-radius: 8px; font-weight: 600; font-size: 1.35rem; border: none; cursor: pointer; transition: background 0.2s;">
+                                <i class="fas fa-table"></i> <span>Abrir Planilla de Productos (Estilo Excel)</span>
                             </button>
-                            <button type="button" class="btn-sheets-action btn-sheets-export" id="btn-db-export-all" style="background: #27272a; border: 1px solid #3f3f46; color: #ffffff; padding: 0.9rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                                <i class="fas fa-cloud-upload-alt"></i> <span>Exportar a Supabase</span>
-                            </button>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <button type="button" class="btn-sheets-action btn-sheets-import" id="btn-db-refresh-all" style="background: #27272a; border: 1px solid #3f3f46; color: #ffffff; padding: 0.9rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.6rem;">
+                                    <i class="fas fa-sync-alt"></i> <span>Refrescar Catálogo</span>
+                                </button>
+                                <button type="button" class="btn-sheets-action btn-sheets-export" id="btn-db-test-conn" style="background: #059669; border: 1px solid #10b981; color: #ffffff; padding: 0.9rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.6rem;">
+                                    <i class="fas fa-plug"></i> <span>Probar Conexión</span>
+                                </button>
+                            </div>
                         </div>
 
-                        <div style="font-size: 1.2rem; color: #a1a1aa; line-height: 1.5; background: #18181b; padding: 1rem 1.2rem; border-radius: 8px;">
-                            <i class="fas fa-lightbulb" style="color: #facc15;"></i> <strong>Almacenamiento Directo:</strong> Las fotos que sacás desde el celular o PC se suben automáticamente a tu almacenamiento en Supabase Storage con CDN ultra rápido.
+                        <div style="font-size: 1.2rem; color: #a1a1aa; line-height: 1.5; background: #18181b; padding: 1rem 1.2rem; border-radius: 8px; border: 1px solid #27272a;">
+                            <i class="fas fa-lightbulb" style="color: #facc15;"></i> <strong>Sincronización Automática:</strong> Cualquier cambio que hagas en las pizzas o en la planilla se guarda al instante en la base de datos de la nube.
                         </div>
                     </div>
-                    <div class="admin-modal-footer">
+                    <div class="admin-modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
                         <button type="button" class="btn-admin-cancel" id="btn-db-modal-close">Cerrar</button>
-                        <button type="button" class="btn-admin-save" id="btn-db-test-conn" style="background: #059669;">
-                            <i class="fas fa-plug"></i> <span>Probar Conexión</span>
+                        <a href="https://supabase.com/dashboard/project/rsuubjaeglnfxiprvqim/editor" target="_blank" style="font-size: 1.15rem; color: #38bdf8; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;" title="Solo para el desarrollador">
+                            <i class="fas fa-external-link-alt"></i> Consola Técnica Supabase
+                        </a>
+                    </div>
+                </div>
+
+                <!-- In-Page Spreadsheet / Table Modal -->
+                <div class="admin-modal" id="admin-table-modal" role="dialog" aria-modal="true" style="max-width: 960px; width: 95vw;">
+                    <div class="admin-modal-header">
+                        <h3 class="admin-modal-title"><i class="fas fa-table" style="color: #38bdf8;"></i> <span>Planilla de Productos (Edición Rápida)</span></h3>
+                        <button class="admin-modal-close" id="admin-table-close"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="admin-modal-body" style="max-height: 70vh; overflow-y: auto; padding: 1.2rem 1.5rem;">
+                        <p style="color: #a1a1aa; font-size: 1.25rem; margin-bottom: 1rem;">
+                            Podés cambiar nombres, categorías y precios directamente en la tabla. Al terminar, tocá <strong>"Guardar Cambios en la Nube"</strong>.
+                        </p>
+                        <div class="table-responsive-wrapper" style="overflow-x: auto;">
+                            <table class="admin-spreadsheet-table" id="admin-spreadsheet-table" style="width: 100%; border-collapse: collapse; font-size: 1.25rem;">
+                                <thead>
+                                    <tr style="background: #27272a; color: #ffffff; text-align: left;">
+                                        <th style="padding: 0.8rem; border-bottom: 2px solid #3f3f46;">Foto</th>
+                                        <th style="padding: 0.8rem; border-bottom: 2px solid #3f3f46;">Nombre</th>
+                                        <th style="padding: 0.8rem; border-bottom: 2px solid #3f3f46;">Categoría</th>
+                                        <th style="padding: 0.8rem; border-bottom: 2px solid #3f3f46; width: 110px;">Precio ($)</th>
+                                        <th style="padding: 0.8rem; border-bottom: 2px solid #3f3f46; width: 110px;">Oferta ($)</th>
+                                        <th style="padding: 0.8rem; border-bottom: 2px solid #3f3f46; text-align: center; width: 80px;">Visible</th>
+                                        <th style="padding: 0.8rem; border-bottom: 2px solid #3f3f46; text-align: center; width: 90px;">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="spreadsheet-table-body">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="admin-modal-footer" style="justify-content: space-between;">
+                        <button type="button" class="btn-admin-cancel" id="btn-table-modal-close">Cerrar</button>
+                        <button type="button" class="btn-admin-save" id="btn-table-save-all" style="background: #059669;">
+                            <i class="fas fa-cloud-upload-alt"></i> <span>Guardar Cambios en la Nube</span>
                         </button>
                     </div>
                 </div>
@@ -299,7 +338,7 @@
                     <form id="admin-password-form" onsubmit="event.preventDefault();">
                         <div class="admin-modal-body">
                             <div style="background: rgba(250, 204, 21, 0.08); border: 1px dashed rgba(250, 204, 21, 0.3); padding: 1.2rem 1.4rem; border-radius: 10px; font-size: 1.25rem; color: #fde047; line-height: 1.5;">
-                                <i class="fas fa-shield-alt"></i> La contraseña se guardará en la pestaña <strong>Configuracion</strong> de tu Google Sheet. Solo vos tenés acceso a ella.
+                                <i class="fas fa-shield-alt"></i> La contraseña se guardará de forma segura en tu base de datos de <strong>Supabase</strong> en la nube. Solo vos tenés acceso a ella.
                             </div>
                             <div class="admin-field-group">
                                 <label class="admin-field-label" for="pass-current">Contraseña Actual *</label>
@@ -445,11 +484,6 @@
                 });
             }
 
-            const btnDbCfg = document.getElementById('btn-admin-db-cfg');
-            const pillStatus = document.getElementById('admin-status-pill');
-            if (btnDbCfg) btnDbCfg.addEventListener('click', () => this.openDbModal());
-            if (pillStatus) pillStatus.addEventListener('click', () => this.openDbModal());
-
             // 5. Product Form Modal Controls
             const modalOverlay = document.getElementById('admin-modal-overlay');
             const productModalClose = document.getElementById('admin-product-close');
@@ -480,7 +514,7 @@
                     if (!file) return;
 
                     if (fileStatus) {
-                        fileStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimizando imagen para Google Drive...';
+                        fileStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimizando imagen para la nube...';
                     }
 
                     try {
@@ -489,7 +523,7 @@
                         if (preview) preview.src = compressedBase64;
                         if (inputImg) inputImg.value = ''; // Se usará la foto cargada
                         if (fileStatus) {
-                            fileStatus.innerHTML = `<i class="fas fa-check-circle" style="color: #22c55e;"></i> Foto lista (${file.name || 'celular'}) - Se subirá a Drive al guardar`;
+                            fileStatus.innerHTML = `<i class="fas fa-check-circle" style="color: #22c55e;"></i> Foto lista (${file.name || 'celular'}) - Se subirá a Supabase al guardar`;
                         }
                     } catch (err) {
                         alert('Error al procesar la imagen: ' + err.message);
@@ -549,145 +583,84 @@
                 });
             }
 
-            // 7. Sheets Settings Modal Controls
-            const sheetsModalClose = document.getElementById('admin-sheets-close');
-            const sheetsModalCloseBtn = document.getElementById('btn-sheets-modal-close');
-            const btnSaveSheetsUrl = document.getElementById('btn-sheets-save-url');
-            const btnTestConn = document.getElementById('btn-test-sheets-conn');
-            const btnExportAll = document.getElementById('btn-sheets-export-all');
-            const btnImportAll = document.getElementById('btn-sheets-import-all');
-            const btnCopyCode = document.getElementById('btn-copy-script-code');
+            // 7. Supabase Database & Table Modal Controls
+            const btnDbCfg = document.getElementById('btn-admin-db-cfg');
+            const dbModalClose = document.getElementById('admin-db-close');
+            const dbModalCloseBtn = document.getElementById('btn-db-modal-close');
+            const btnDbTestConn = document.getElementById('btn-db-test-conn');
+            const btnDbRefresh = document.getElementById('btn-db-refresh-all');
+            const btnDbOpenTable = document.getElementById('btn-db-open-table');
 
-            if (sheetsModalClose) sheetsModalClose.addEventListener('click', closeModal);
-            if (sheetsModalCloseBtn) sheetsModalCloseBtn.addEventListener('click', closeModal);
+            // Botón en topbar para abrir modal de Base de Datos
+            if (btnDbCfg) btnDbCfg.addEventListener('click', () => this.openDbModal());
 
-            if (btnSaveSheetsUrl) {
-                btnSaveSheetsUrl.addEventListener('click', () => {
-                    const inputUrl = document.getElementById('sheets-web-app-url');
-                    const val = inputUrl ? inputUrl.value.trim() : '';
-                    this.db.saveConfig(val);
-                    this.showToast('URL de Google Sheets guardada.');
-                    this.updateSyncStatusBadge();
+            // Cerrar modal de DB
+            if (dbModalClose) dbModalClose.addEventListener('click', closeModal);
+            if (dbModalCloseBtn) dbModalCloseBtn.addEventListener('click', closeModal);
+
+            // Probar conexión con Supabase
+            if (btnDbTestConn) {
+                btnDbTestConn.addEventListener('click', async () => {
+                    btnDbTestConn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Probando...';
+                    try {
+                        const res = await this.db.testConnection();
+                        btnDbTestConn.innerHTML = '<i class="fas fa-check"></i> ¡Conectado!';
+                        setTimeout(() => { btnDbTestConn.innerHTML = '<i class="fas fa-plug"></i> <span>Probar Conexión</span>'; }, 3000);
+                        alert('✅ ' + (res.message || '¡Conexión con Supabase verificada con éxito!'));
+                    } catch (err) {
+                        btnDbTestConn.innerHTML = '<i class="fas fa-times"></i> Error';
+                        setTimeout(() => { btnDbTestConn.innerHTML = '<i class="fas fa-plug"></i> <span>Probar Conexión</span>'; }, 3000);
+                        alert('❌ Error al conectar con Supabase: ' + err.message);
+                    }
+                });
+            }
+
+            // Refrescar catálogo desde Supabase
+            if (btnDbRefresh) {
+                btnDbRefresh.addEventListener('click', async () => {
+                    btnDbRefresh.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refrescando...';
+                    try {
+                        const prods = await this.db.fetchFromSupabase();
+                        btnDbRefresh.innerHTML = '<i class="fas fa-check"></i> ¡Actualizado!';
+                        setTimeout(() => { btnDbRefresh.innerHTML = '<i class="fas fa-sync-alt"></i> <span>Refrescar Catálogo</span>'; }, 3000);
+                        this.showToast(`¡Catálogo actualizado desde Supabase (${prods ? prods.length : 0} productos)!`);
+                        this.updateSyncStatusBadge();
+                    } catch (err) {
+                        btnDbRefresh.innerHTML = '<i class="fas fa-times"></i> Error';
+                        setTimeout(() => { btnDbRefresh.innerHTML = '<i class="fas fa-sync-alt"></i> <span>Refrescar Catálogo</span>'; }, 3000);
+                        alert('Error al traer datos desde Supabase: ' + err.message);
+                    }
+                });
+            }
+
+            // Abrir planilla desde el modal de DB
+            if (btnDbOpenTable) {
+                btnDbOpenTable.addEventListener('click', () => {
                     this.closeAllModals();
+                    this.openTableModal();
                 });
             }
 
-            if (btnTestConn) {
-                btnTestConn.addEventListener('click', async () => {
-                    const inputUrl = document.getElementById('sheets-web-app-url');
-                    const val = inputUrl ? inputUrl.value.trim() : '';
-                    if (!val) {
-                        alert('Ingresá una URL de Google Apps Script primero.');
-                        return;
-                    }
-                    btnTestConn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Probando...';
-                    try {
-                        const res = await this.db.testConnection(val);
-                        btnTestConn.innerHTML = '<i class="fas fa-check"></i> ¡Conectado!';
-                        setTimeout(() => { btnTestConn.innerHTML = '<i class="fas fa-plug"></i> Probar'; }, 3000);
-                        alert('✅ ' + (res.message || '¡Conexión con Google Sheets verificada con éxito!'));
-                    } catch (err) {
-                        btnTestConn.innerHTML = '<i class="fas fa-times"></i> Error';
-                        setTimeout(() => { btnTestConn.innerHTML = '<i class="fas fa-plug"></i> Probar'; }, 3000);
-                        alert('❌ No se pudo conectar: ' + err.message + '\n\nRevisá que la implementación de Apps Script tenga acceso: "Cualquier usuario" (Anyone).');
-                    }
-                });
-            }
+            // 7.1 Planilla Modal Controls
+            const btnTableView = document.getElementById('btn-admin-table-view');
+            const tableModalClose = document.getElementById('admin-table-close');
+            const tableModalCloseBtn = document.getElementById('btn-table-modal-close');
+            const btnTableSaveAll = document.getElementById('btn-table-save-all');
 
-            if (btnExportAll) {
-                btnExportAll.addEventListener('click', async () => {
-                    const inputUrl = document.getElementById('sheets-web-app-url');
-                    if (inputUrl && inputUrl.value.trim()) {
-                        this.db.saveConfig(inputUrl.value.trim());
-                    }
-                    if (!this.db.config.gasUrl) {
-                        alert('Primero configurá y guardá la URL de Google Sheets.');
-                        return;
-                    }
+            if (btnTableView) btnTableView.addEventListener('click', () => this.openTableModal());
+            if (tableModalClose) tableModalClose.addEventListener('click', closeModal);
+            if (tableModalCloseBtn) tableModalCloseBtn.addEventListener('click', closeModal);
+            if (btnTableSaveAll) btnTableSaveAll.addEventListener('click', () => this.saveTableChanges());
 
-                    btnExportAll.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Exportando...';
-                    try {
-                        const res = await this.db.exportAllToSheets();
-                        btnExportAll.innerHTML = '<i class="fas fa-check"></i> ¡Listo!';
-                        setTimeout(() => { btnExportAll.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Exportar Todo a Sheets'; }, 3000);
-                        this.showToast(`¡${res.count || 'Todos los'} productos exportados a Google Sheets exitosamente!`);
-                        this.updateSyncStatusBadge();
-                    } catch (err) {
-                        btnExportAll.innerHTML = '<i class="fas fa-times"></i> Error';
-                        setTimeout(() => { btnExportAll.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Exportar Todo a Sheets'; }, 3000);
-                        alert('Error al exportar a Google Sheets: ' + err.message);
-                    }
-                });
-            }
-
-            if (btnImportAll) {
-                btnImportAll.addEventListener('click', async () => {
-                    const inputUrl = document.getElementById('sheets-web-app-url');
-                    if (inputUrl && inputUrl.value.trim()) {
-                        this.db.saveConfig(inputUrl.value.trim());
-                    }
-                    if (!this.db.config.gasUrl) {
-                        alert('Primero configurá la URL de Google Sheets.');
-                        return;
-                    }
-
-                    btnImportAll.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Descargando...';
-                    try {
-                        const prods = await this.db.fetchFromSheets();
-                        btnImportAll.innerHTML = '<i class="fas fa-check"></i> ¡Actualizado!';
-                        setTimeout(() => { btnImportAll.innerHTML = '<i class="fas fa-cloud-download-alt"></i> Descargar desde Sheets'; }, 3000);
-                        this.showToast(`¡Catálogo actualizado desde Google Sheets (${prods ? prods.length : 0} productos)!`);
-                        this.updateSyncStatusBadge();
-                    } catch (err) {
-                        btnImportAll.innerHTML = '<i class="fas fa-times"></i> Error';
-                        setTimeout(() => { btnImportAll.innerHTML = '<i class="fas fa-cloud-download-alt"></i> Descargar desde Sheets'; }, 3000);
-                        alert('Error al traer datos desde Google Sheets: ' + err.message);
-                    }
-                });
-            }
-
-            const btnOrganizeDrive = document.getElementById('btn-sheets-organize-drive');
-            if (btnOrganizeDrive) {
-                btnOrganizeDrive.addEventListener('click', async () => {
-                    const inputUrl = document.getElementById('sheets-web-app-url');
-                    if (inputUrl && inputUrl.value.trim()) {
-                        this.db.saveConfig(inputUrl.value.trim());
-                    }
-                    if (!this.db.config.gasUrl) {
-                        alert('Primero configurá y guardá la URL de Google Sheets.');
-                        return;
-                    }
-
-                    btnOrganizeDrive.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Organizando Drive...';
-                    try {
-                        const res = await this.db.organizeDrive();
-                        btnOrganizeDrive.innerHTML = '<i class="fas fa-check"></i> ¡Drive Organizado!';
-                        setTimeout(() => {
-                            btnOrganizeDrive.innerHTML = '<i class="fas fa-folder-plus"></i> <span>Organizar Drive: Micrositios / LaBelgrano</span>';
-                        }, 3000);
-                        alert(res.message || '✅ ¡Estructura de carpetas organizada en tu Google Drive con éxito!');
-                        this.showToast('Google Drive organizado correctamente.');
-                    } catch (err) {
-                        btnOrganizeDrive.innerHTML = '<i class="fas fa-times"></i> Error';
-                        setTimeout(() => {
-                            btnOrganizeDrive.innerHTML = '<i class="fas fa-folder-plus"></i> <span>Organizar Drive: Micrositios / LaBelgrano</span>';
-                        }, 3000);
-                        alert('❌ Error al organizar Google Drive: ' + err.message);
-                    }
-                });
-            }
-
-            if (btnCopyCode) {
-                btnCopyCode.addEventListener('click', () => {
-                    // Copiar el texto o indicar el archivo
-                    const code = `// Abrir el archivo google-sheets-backend.gs de este proyecto para el código completo.`;
-                    navigator.clipboard.writeText(code).then(() => {
-                        this.showToast('¡Nombre de archivo copiado! Buscá google-sheets-backend.gs en tu carpeta.');
-                    }).catch(() => {
-                        alert('Encontrá el código completo listo para pegar en el archivo: google-sheets-backend.gs');
-                    });
-                });
-            }
+            // Delegación de clics dentro de la tabla de la planilla
+            document.addEventListener('click', (e) => {
+                const editRowBtn = e.target.closest('.btn-table-row-edit');
+                if (editRowBtn) {
+                    const prodId = editRowBtn.getAttribute('data-id');
+                    this.closeAllModals();
+                    this.openProductModal(prodId);
+                }
+            });
 
             // 7.1 Change Password Modal events
             const btnChangePass = document.getElementById('btn-admin-change-pass');
@@ -778,28 +751,125 @@
             }
         }
 
+        openDbModal() {
+            const modal = document.getElementById('admin-db-modal');
+            const overlay = document.getElementById('admin-modal-overlay');
+            if (overlay) overlay.classList.add('active');
+            if (modal) modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        openTableModal() {
+            const modal = document.getElementById('admin-table-modal');
+            const overlay = document.getElementById('admin-modal-overlay');
+            const tbody = document.getElementById('spreadsheet-table-body');
+            if (!modal || !tbody) return;
+
+            const prods = this.db.products || [];
+            tbody.innerHTML = prods.map(p => `
+                <tr data-id="${p.id}" style="border-bottom: 1px solid #3f3f46;">
+                    <td style="padding: 0.6rem;">
+                        <img src="${p.image || 'images/product-1.png'}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 6px; border: 1px solid #52525b;">
+                    </td>
+                    <td style="padding: 0.6rem;">
+                        <input type="text" class="table-input-name" value="${(p.name || '').replace(/"/g, '&quot;')}" style="width: 100%; min-width: 180px; background: #18181b; border: 1px solid #3f3f46; color: #fff; padding: 0.5rem 0.7rem; border-radius: 6px; font-size: 1.25rem;">
+                    </td>
+                    <td style="padding: 0.6rem;">
+                        <select class="table-input-cat" style="background: #18181b; border: 1px solid #3f3f46; color: #fff; padding: 0.5rem 0.7rem; border-radius: 6px; font-size: 1.25rem;">
+                            <option value="pizzas" ${p.category === 'pizzas' ? 'selected' : ''}>Pizzas</option>
+                            <option value="sandwiches" ${p.category === 'sandwiches' ? 'selected' : ''}>Sándwiches</option>
+                            <option value="faina" ${p.category === 'faina' ? 'selected' : ''}>Fainá</option>
+                            <option value="lemeyun" ${p.category === 'lemeyun' ? 'selected' : ''}>Lemeyun</option>
+                            <option value="bebidas" ${p.category === 'bebidas' ? 'selected' : ''}>Bebidas</option>
+                            <option value="promos" ${p.category === 'promos' ? 'selected' : ''}>Promos</option>
+                        </select>
+                    </td>
+                    <td style="padding: 0.6rem;">
+                        <input type="number" class="table-input-price" value="${p.price || 0}" min="0" style="width: 100px; background: #18181b; border: 1px solid #3f3f46; color: #fff; padding: 0.5rem 0.7rem; border-radius: 6px; font-size: 1.25rem; font-weight: bold;">
+                    </td>
+                    <td style="padding: 0.6rem;">
+                        <input type="number" class="table-input-oldprice" value="${p.old_price || ''}" min="0" placeholder="-" style="width: 100px; background: #18181b; border: 1px solid #3f3f46; color: #a1a1aa; padding: 0.5rem 0.7rem; border-radius: 6px; font-size: 1.25rem;">
+                    </td>
+                    <td style="padding: 0.6rem; text-align: center;">
+                        <input type="checkbox" class="table-input-active" ${p.active !== false ? 'checked' : ''} style="width: 20px; height: 20px; cursor: pointer; accent-color: #22c55e;">
+                    </td>
+                    <td style="padding: 0.6rem; text-align: center;">
+                        <button type="button" class="btn-table-row-edit" data-id="${p.id}" style="background: #2563eb; color: #fff; border: none; padding: 0.5rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 1.2rem;" title="Editar foto y descripción completa">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            if (overlay) overlay.classList.add('active');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        async saveTableChanges() {
+            const btnSave = document.getElementById('btn-table-save-all');
+            const tbody = document.getElementById('spreadsheet-table-body');
+            if (!tbody || !btnSave) return;
+
+            btnSave.disabled = true;
+            btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando cambios...';
+
+            const rows = tbody.querySelectorAll('tr[data-id]');
+            let changedCount = 0;
+
+            try {
+                for (const tr of rows) {
+                    const id = tr.getAttribute('data-id');
+                    const name = tr.querySelector('.table-input-name').value.trim();
+                    const category = tr.querySelector('.table-input-cat').value;
+                    const price = Number(tr.querySelector('.table-input-price').value);
+                    const oldPriceVal = tr.querySelector('.table-input-oldprice').value;
+                    const old_price = oldPriceVal ? Number(oldPriceVal) : null;
+                    const active = tr.querySelector('.table-input-active').checked;
+
+                    const current = this.db.getProductById(id);
+                    if (current) {
+                        const hasChanged = current.name !== name || 
+                                           current.category !== category || 
+                                           current.price !== price || 
+                                           current.old_price !== old_price || 
+                                           current.active !== active;
+
+                        if (hasChanged) {
+                            await this.db.updateProduct(id, { name, category, price, old_price, active });
+                            changedCount++;
+                        }
+                    }
+                }
+
+                this.closeAllModals();
+                this.showToast(changedCount > 0 ? `¡${changedCount} productos actualizados con éxito en Supabase!` : 'No se detectaron cambios.');
+            } catch (err) {
+                alert('Error al guardar cambios: ' + err.message);
+            } finally {
+                btnSave.disabled = false;
+                btnSave.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> <span>Guardar Cambios en la Nube</span>';
+            }
+        }
+
         updateSyncStatusBadge() {
-            const pill = document.getElementById('admin-status-pill');
-            if (!pill) return;
+            const dot = document.getElementById('topbar-status-dot');
+            const textEl = document.getElementById('topbar-db-text');
+            if (!dot || !textEl) return;
 
             const cfg = this.db.config;
-            pill.className = 'admin-status-pill';
-
             if (!cfg.supabaseUrl || !cfg.supabaseKey) {
-                pill.classList.add('local');
-                pill.querySelector('.admin-status-text').innerText = 'Modo Local (Configurar Supabase)';
-                pill.title = 'Los cambios se guardan en este navegador. Hacé clic para conectar con Supabase.';
+                dot.style.background = '#eab308';
+                textEl.innerText = 'Modo Local';
             } else if (cfg.lastSyncStatus === 'syncing') {
-                pill.classList.add('syncing');
-                pill.querySelector('.admin-status-text').innerText = 'Sincronizando con Supabase...';
+                dot.style.background = '#38bdf8';
+                textEl.innerText = 'Sincronizando...';
             } else if (cfg.lastSyncStatus === 'error') {
-                pill.classList.add('error');
-                pill.querySelector('.admin-status-text').innerText = 'Error en Supabase (Verificar)';
-                pill.title = 'Hubo un error de conexión con Supabase. Clic para verificar.';
+                dot.style.background = '#ef4444';
+                textEl.innerText = 'Error Supabase';
             } else {
-                pill.classList.add('synced');
-                pill.querySelector('.admin-status-text').innerText = 'Supabase Conectado';
-                pill.title = 'Conectado en vivo con PostgreSQL y Supabase Storage. Clic para administrar.';
+                dot.style.background = '#22c55e';
+                textEl.innerText = 'Supabase Conectado';
             }
         }
 
@@ -828,7 +898,7 @@
             const fileStatus = document.getElementById('upload-file-status');
             if (fileInput) fileInput.value = '';
             if (fileStatus) {
-                fileStatus.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Se guardará automáticamente en tu Google Drive';
+                fileStatus.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Se guardará automáticamente en Supabase Storage (CDN)';
             }
 
             if (productId) {
@@ -874,21 +944,7 @@
             const overlay = document.getElementById('admin-modal-overlay');
             const msgEl = document.getElementById('delete-confirm-msg');
 
-            msgEl.innerHTML = `¿Estás seguro de que querés eliminar <strong>"${product.name}"</strong> ($${product.price})?<br>Se actualizará el catálogo y la hoja de Google Sheets.`;
-
-            overlay.classList.add('active');
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        openDbModal() {
-            const modal = document.getElementById('admin-db-modal');
-            const overlay = document.getElementById('admin-modal-overlay');
-            const inputUrl = document.getElementById('sheets-web-app-url');
-
-            if (inputUrl) {
-                inputUrl.value = this.db.config.gasUrl || '';
-            }
+            msgEl.innerHTML = `¿Estás seguro de que querés eliminar <strong>"${product.name}"</strong> ($${product.price})?<br>Se eliminará de la carta y de la base de datos de Supabase.`;
 
             overlay.classList.add('active');
             modal.classList.add('active');
