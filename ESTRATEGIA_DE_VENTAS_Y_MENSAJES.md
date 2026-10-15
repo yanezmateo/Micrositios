@@ -23,26 +23,27 @@ Antes de enviar el primer mensaje, tené en cuenta cómo piensa y vive el dueño
 > **Consejo pro:** Enviá este mensaje por WhatsApp Business del local (o por mensaje directo de Instagram si son activos allí). El tono debe ser cercano, humilde, profesional y 100% uruguayo.
 
 ```text
-¡Hola, buenas tardes! ¿Cómo están?
+¡Hola, buenas! ¿Cómo están?
 
-Me presento rápido: mi nombre es Mateo, soy estudiante de programación e ingeniería acá en Montevideo. 
+Mi nombre es Mateo, soy estudiante de Ingeniería y programador acá en Montevideo. 
 
-Les escribo porque soy vecino/seguidor de la pizzería y estuve viendo el laburo que hacen con las pizzas a la leña. Noté que hoy en día muchos clientes les deben pedir la carta por WhatsApp o consultar zonas de entrega, y sé lo caótico que se vuelve atender esos mensajes en plena hora pico, además de las comisiones altísimas que cobran aplicaciones como PedidosYa.
+Les escribo porque soy vecino de la pizzería y estuve viendo el laburo que hacen con las pizzas. Me imagino que hoy en día muchos clientes les deben pedir la carta por WhatsApp o consultar zonas de entrega, y debe ser caótico atender esos mensajes rápido en plena hora pico, ni hablar de las comisiones altísimas que cobran aplicaciones como PedidosYa.
 
-Por eso, como proyecto, me tomé el tiempo de diseñarles una página web y menú digital interactivo pensado exclusivamente para celulares y adaptado a La Belgrano. 
+Por eso me tomé el atrevimiento de diseñarles una página web y menú digital interactivo pensado exclusivamente para facilitarles el armado de pedidos. Tener una página web ayuda al posicionamiento en las redes y sobre todo para con las busquedas en IA´s, por ejemplo si alguien busca en google pizzerías cerca de mi zona, la página les puede aparecer. 
 
-La idea principal es que el cliente puede:
-1. Ver todas las pizzas, promos y fotos de forma súper tentadora desde su celular.
-2. Armar su pedido con ingredientes y método de pago en 1 clic.
-3. Consultar si llegan a su casa con el delivery antes de pedir.
-4. El pedido les llega a ustedes por WhatsApp ya redactado, ordenado y con el total calculado, listo para meter al horno.
+La página web permite: 
+1. Ver todas las pizzas, promos y fotos de forma súper rápida desde cualquier dispositivo.
+2. Armar su pedido modificando ingredientes, agregando dirección, teléfono, y método de pago en un par de clicks. 
+3. Consultar las zonas de cobertura del delivery.
+4. El pedido les llega a ustedes por WhatsApp ya redactado, ordenado y con el total calculado, listo para arrancar con la preparación. 
 
 Además, incluye un modo administrador para que ustedes mismos puedan cambiar precios o subir fotos de platos nuevos desde su propio celular en 10 segundos, sin depender de nadie.
 
-Ya la tengo lista y funcionando. Si te interesa, te puedo mandar el link para que la mires sin compromiso (aclarando que todo el diseño, fotos, textos y precios son 100% editables y adaptables a lo que ustedes prefieran).
+Ya la tengo lista y funcionando. Si les interesa, les puedo mandar el link para que la miren ustedes mismos sin compromiso (la página es editable en su totalidad, actualmente tiene productos, txtos e imagenes ilustrativas).
+
 
 ¡Muchas gracias por su tiempo y buenas ventas hoy!
-Mateo
+
 ```
 
 ---
