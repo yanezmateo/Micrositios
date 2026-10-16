@@ -1143,27 +1143,74 @@ button, input, select, textarea {
     font-weight: 700;
 }
 
-/* Toast notification */
+/* Cart Bump & Highlight Animation */
+@keyframes cartBounceGlow {
+    0% {
+        transform: scale(1);
+    }
+    20% {
+        transform: scale(1.18);
+        box-shadow: 0 0 0 10px rgba(227, 86, 42, 0.5), 0 12px 35px rgba(227, 86, 42, 0.85);
+        border-color: #ff7a50;
+    }
+    40% {
+        transform: scale(0.94);
+    }
+    60% {
+        transform: scale(1.08);
+        box-shadow: 0 0 0 16px rgba(227, 86, 42, 0), 0 8px 25px rgba(227, 86, 42, 0.45);
+    }
+    80% {
+        transform: scale(0.98);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes navCartWiggle {
+    0% { transform: scale(1); }
+    20% { transform: scale(1.3) rotate(-15deg); color: var(--primary); }
+    40% { transform: scale(1.3) rotate(15deg); color: var(--primary); }
+    60% { transform: scale(1.2) rotate(-8deg); color: var(--primary); }
+    80% { transform: scale(1.1) rotate(5deg); color: var(--primary); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+.floating-cart-btn.cart-highlight {
+    animation: cartBounceGlow 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+.cart-btn-wrapper.cart-highlight #cart-btn {
+    animation: navCartWiggle 0.85s ease !important;
+}
+
+/* Toast notification - Diseño moderno con bordes estilizados */
 .toast-notice {
     position: fixed;
-    bottom: 3rem;
+    bottom: 3.5rem;
     left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: var(--dark);
+    background: rgba(24, 24, 27, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: #ffffff;
-    padding: 1.2rem 2.4rem;
-    border-radius: var(--radius-full);
-    font-size: 1.4rem;
+    padding: 1.2rem 2.2rem;
+    border-radius: 1.2rem;
+    max-width: min(92vw, 44rem);
+    width: max-content;
+    font-size: 1.35rem;
     font-weight: 500;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    line-height: 1.4;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.12);
     z-index: 2000;
     display: flex;
     align-items: center;
-    gap: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    gap: 1.2rem;
     opacity: 0;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
     pointer-events: none;
+    text-align: left;
 }
 
 .toast-notice.show {
@@ -1172,8 +1219,9 @@ button, input, select, textarea {
 }
 
 .toast-notice i {
-    color: var(--primary);
-    font-size: 1.6rem;
+    color: #22c55e;
+    font-size: 1.8rem;
+    flex-shrink: 0;
 }
 
 /* ==========================================================================
@@ -2117,6 +2165,33 @@ button, input, select, textarea {
     height: 4.8rem;
     border-radius: 50%;
     object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Google Sans", sans-serif;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    user-select: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.google-avatar-c {
+    background: linear-gradient(135deg, #ab47bc, #7b1fa2);
+}
+
+.google-avatar-e {
+    background: linear-gradient(135deg, #42a5f5, #1976d2);
+}
+
+.google-avatar-n {
+    background: linear-gradient(135deg, #26a69a, #00796b);
+}
+
+.google-avatar-g {
+    background: linear-gradient(135deg, #ff7043, #d84315);
 }
 
 .google-user-name {
@@ -2311,9 +2386,58 @@ button, input, select, textarea {
     transform: translateX(4px);
 }
 
-.footer .payment-img {
-    margin-top: 1.2rem;
-    max-width: 22rem;
+/* Badges de Medios de Pago en Footer */
+.payment-badges-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1.4rem;
+}
+
+.payment-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #ffffff;
+    border: 1px solid #3f3f46;
+    padding: 0.6rem 1.1rem;
+    border-radius: var(--radius-sm);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #18181b;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    transition: var(--transition);
+}
+
+.payment-badge-pill:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.payment-badge-pill i {
+    font-size: 1.5rem;
+}
+
+.payment-badge-pill.badge-visa i {
+    color: #1a1f71;
+    font-size: 1.7rem;
+}
+
+.payment-badge-pill.badge-master i {
+    color: #eb001b;
+    font-size: 1.7rem;
+}
+
+.payment-badge-pill.badge-mercadopago i {
+    color: #009ee3;
+}
+
+.payment-badge-pill.badge-edenred i {
+    color: #e51a2e;
+}
+
+.payment-badge-pill.badge-cash i {
+    color: #16a34a;
 }
 
 .footer .credit {
@@ -2540,6 +2664,14 @@ button, input, select, textarea {
         bottom: max(2rem, env(safe-area-inset-bottom, 2rem));
         right: 1.6rem;
         padding: 1rem 1.8rem;
+    }
+
+    /* Evitar solapamiento con el carrito flotante en celular */
+    .toast-notice {
+        bottom: max(8.5rem, calc(env(safe-area-inset-bottom, 2rem) + 6.5rem));
+        max-width: calc(100vw - 3.2rem);
+        padding: 1.2rem 1.8rem;
+        font-size: 1.3rem;
     }
 
     /* Cart Drawer Full Screen Mobile */

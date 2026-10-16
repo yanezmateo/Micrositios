@@ -426,8 +426,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            updateCartUI();
-            showToast(`¡${currentCustomItem.name} agregada al pedido!`);
+            updateCartUI(true);
+            showToast(`¡${currentCustomItem.name} se agregó a tu pedido!`);
             closeCustomModal();
         });
     }
@@ -452,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Render Cart UI ---
-    function updateCartUI() {
+    function updateCartUI(shouldAnimate = false) {
         localStorage.setItem('pizzeria_cart', JSON.stringify(cart));
 
         const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -461,13 +461,33 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update Badges
         if (cartBadge) {
             cartBadge.innerText = totalItems;
-            cartBadge.classList.add('bump');
-            setTimeout(() => cartBadge.classList.remove('bump'), 300);
+            if (shouldAnimate) {
+                cartBadge.classList.add('bump');
+                setTimeout(() => cartBadge.classList.remove('bump'), 300);
+            }
         }
 
         if (floatingCartCount) floatingCartCount.innerText = totalItems;
         if (floatingCartTotal) floatingCartTotal.innerText = formatCurrency(totalPrice);
         if (totalAmountEl) totalAmountEl.innerText = formatCurrency(totalPrice);
+
+        // Animar e iluminar el carrito para indicar claramente dónde despachar
+        if (shouldAnimate && totalItems > 0) {
+            if (floatingCartBtn) {
+                floatingCartBtn.classList.remove('cart-highlight');
+                void floatingCartBtn.offsetWidth; // forzar reflow para reiniciar animación
+                floatingCartBtn.classList.add('cart-highlight');
+                setTimeout(() => floatingCartBtn.classList.remove('cart-highlight'), 950);
+            }
+
+            const cartWrapper = document.querySelector('.cart-btn-wrapper');
+            if (cartWrapper) {
+                cartWrapper.classList.remove('cart-highlight');
+                void cartWrapper.offsetWidth;
+                cartWrapper.classList.add('cart-highlight');
+                setTimeout(() => cartWrapper.classList.remove('cart-highlight'), 950);
+            }
+        }
 
         // Render Items in Cart Drawer
         if (!cartItemsContainer) return;
@@ -536,12 +556,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (item.quantity <= 0) {
             cart = cart.filter(i => (i.cartId || i.id) !== cartId);
         }
-        updateCartUI();
+        updateCartUI(delta > 0);
     }
 
     function removeItem(cartId) {
         cart = cart.filter(i => (i.cartId || i.id) !== cartId);
-        updateCartUI();
+        updateCartUI(false);
     }
 
     // --- WhatsApp Order Generation (Item 9 WhatsApp Customizations) ---

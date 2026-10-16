@@ -95,55 +95,76 @@ Mirala tranquilo cuando tengas un ratito y me comentás qué te parece. Todo se 
 
 ---
 
-## 💰 5. Plantilla de Costos Reales en Uruguay & Propuestas de Precios
+## 💰 5. Modelo de Precios Mensuales (Suscripción / MRR) & Costos Reales
 
-Aquí tenés los costos técnicos reales en Uruguay para que tengas claro tu margen de ganancia, y dos formatos de presupuesto listos para copiar y pegar:
+Para eliminar la barrera de entrada del cliente y generar **ingresos recurrentes todos los meses**, dejamos de lado el pago único inicial y nos centramos en un **abono mensual de mantenimiento**.
 
-### ⚙️ Costos de Infraestructura en Uruguay (Lo que a vos te cuesta):
-* **Hosting Vercel + Base de datos Supabase:** **$0 UYU / mes** (Nivel gratuito global de por vida, soporta más de 50.000 visitas al mes sin costo).
-* **Dominio propio uruguayo (`.uy` o `.com.uy`):** **$1.400 a $1.600 UYU / año** (Se abona anualmente en Antel / NIC.uy, equivale a ~$35-38 USD al año).
-* **Dominio internacional (`.com`):** **$500 a $650 UYU / año** (~$12 a $14 USD al año en Namecheap/Cloudflare).
-* **Sin dominio (`pizzeriabelgrano.vercel.app`):** **$0 UYU** (Totalmente gratis con candadito SSL verde incluido).
+### ⚙️ Costos Técnicos Reales (Lo que a vos te cuesta):
+* **Hosting Vercel + Base de datos Supabase:** **$0 UYU / mes** (Nivel gratuito global de por vida).
+* **Dominio propio uruguayo (`.uy` o `.com.uy` en Hosting Montevideo):**
+  * Registro: **USD 9.85 / año** (~$400 UYU/año = **~$33 UYU / mes**).
+  * Renovación: **USD 14.95 / año** (~$600 UYU/año = **~$50 UYU / mes**).
+* **Bot de WhatsApp e Instagram (Auto-Respuesta con Link):** **$0 UYU / mes**.
+  * Se implementa mediante las automatizaciones oficiales y gratuitas de **WhatsApp Business** (Mensaje de bienvenida y respuestas rápidas) + **Meta Business Suite** (Preguntas frecuentes con botón "Ver Menú" y respuestas automáticas por palabras clave como "menú", "carta", "precios"). Cero costo de APIs, sin riesgo de baneo y el cliente sigue usando su WhatsApp normal en el celular.
+* **Sin dominio (`pizzeriabelgrano.vercel.app`):** **$0 UYU**.
+
+---
+
+### 📊 Tabla de Planes y Márgenes de Ganancia
+
+| Plan | Incluye | Costo Real Tuyo | Precio al Cliente | Tu Ganancia Mensual |
+| :--- | :--- | :---: | :---: | :---: |
+| **1. Económica** | Web en subdominio `.vercel.app` + Mantenimiento. | **$0 UYU** | **$890 UYU / mes** | **$890 UYU** *(100% neto)* |
+| **2. Económica + Dominio** | Web + Dominio `.uy` propio oficial (ej: `labelgrano.uy` con SSL) + Mantenimiento. | **~$50 UYU** | **$1.290 UYU / mes** | **$1.240 UYU** *(96% neto)* |
+| **3. Económica + Bot** | Web en subdominio + Auto-respuesta configurada en WhatsApp e IG + Mantenimiento. | **$0 UYU** | **$1.390 UYU / mes** | **$1.390 UYU** *(100% neto)* |
+| **4. Plan FULL (Dominio + Bot)** | Dominio `.uy` + Auto-respuesta configurada en WhatsApp e IG + Mantenimiento. | **~$50 UYU** | **$1.790 UYU / mes** | **$1.740 UYU** *(97% neto)* |
 
 ---
 
 ### 📋 Plantilla de Presupuesto para Enviar al Cliente
 
 ```text
-Buenas [Nombre]! Te preparé las dos opciones con costos súper claros y accesibles pensados para el comercio local:
+¡Buenas [Nombre]! Te preparé las opciones de abono mensual súper accesibles para el comercio, sin costos de entrada ni comisiones por venta:
 
 --------------------------------------------------
-🍕 OPCIÓN 1: Web Lista con Dominio Propio Oficial (.uy)
-Ideal para máxima presencia de marca en folletos, caja y redes (ej: labelgrano.uy)
+🍕 PLAN 1: Básico Digital — $890 UYU / mes
+Ideal para arrancar ya sin costo inicial y tener su carta online.
 
-• Dominio web oficial propio registrado por 1 año (.uy o .com.uy ante Antel / NIC.uy).
-• Configuración de seguridad SSL (candadito verde en Google).
 • Menú digital interactivo autoadministrable (para celular y PC).
-• Sistema de pedidos directo a su WhatsApp sin comisiones por venta.
-• Panel de control para cambiar precios y fotos desde el celular en tiempo real.
-• Verificador automático de zonas de cobertura delivery y Take Away.
-• Carga inicial de todo su menú y promociones.
-• Capacitación rápida de 10 minutos para usar el panel.
-
-Inversión única de puesta en marcha: $8.500 UYU
-(Incluye la compra y configuración del dominio por el primer año).
-Costo mensual por comisiones: $0 (todo lo que venden es 100% de ustedes).
+• Pedidos directos a su WhatsApp sin intermediarios ni comisiones.
+• Panel para actualizar fotos y precios desde el celular en 5 segundos.
+• Verificador automático de zonas de reparto / delivery y retiro en local.
+• Enlace web seguro (ej: labelgrano.vercel.app) listo para compartir.
+• Mantenimiento técnico continuo y soporte para cambios de carta.
 
 --------------------------------------------------
-🍕 OPCIÓN 2: Web Lista Sin Costo de Dominio (La más económica)
-Mismas funciones completas funcionando con enlace seguro vercel.app
+🌐 PLAN 2: Con Dominio Propio Oficial — $1.290 UYU / mes
+Para máxima presencia de marca y confianza del cliente.
 
-• Todo el sistema completo (Menú, pedidos WhatsApp, panel móvil de precios y fotos).
-• Carga de la carta completa y configuración de su número de WhatsApp.
-• Alojada en enlace web seguro (ej: pizzeriabelgrano.vercel.app) ideal para poner en la bio de Instagram y enlace de WhatsApp Business.
-• Sin costo de renovación de dominio ni mantenimiento obligatorio.
+• Todo lo incluido en el Plan Básico.
+• Dominio oficial uruguayo propio registrado (.uy, ej: labelgrano.uy).
+• Configuración de seguridad SSL (candadito verde oficial).
+• Ideal para imprimir en cajas de pizza, imanes, folletos y marquesina.
 
-Inversión única de puesta en marcha: $5.500 UYU
-Costo mensual: $0.
 --------------------------------------------------
+🤖 PLAN 3: Con Auto-Respuesta — $1.390 UYU / mes
+Para no perder ventas en horas pico cuando están a mil cocinando.
 
-🛠️ Mantenimiento / Soporte (Opcional):
-El sistema está hecho para que ustedes sean 100% independientes y no tengan que pagar nada por mes. Si a futuro prefieren que yo me encargue de cargar platos nuevos o diseñar banners especiales para fechas clave, ofrezco soporte mensual opcional por $900 UYU/mes.
+• Todo lo incluido en el Plan Básico.
+• Sistema de respuesta automática en WhatsApp e Instagram configurado:
+  Cada vez que un cliente les escribe o pide la carta/menú, el sistema le responde al instante con el enlace a la web para que arme su pedido solo.
+
+--------------------------------------------------
+⭐ PLAN 4: FULL (Dominio Propio + Mensajes Automáticos) — $1.790 UYU / mes
+La solución completa definitiva para digitalizar la pizzería.
+
+• Web completa autoadministrable.
+• Dominio web oficial uruguayo (.uy).
+• Auto-respuesta configurada en WhatsApp e Instagram.
+• Soporte prioritario para promociones y fechas especiales.
+
+--------------------------------------------------
+👉 En todos los planes: Inversión inicial $0 y cero comisiones por pedido (el 100% de la venta es de ustedes).
 ```
 
 ---
